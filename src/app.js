@@ -6,7 +6,7 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3, Mesh, SphereGeometry, MeshPhongMaterial } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 
@@ -35,11 +35,34 @@ controls.minDistance = 4;
 controls.maxDistance = 16;
 controls.update();
 
+// placeholder for handling game ending
+const handleGameOver = () => {
+    console.log("You Lost!");
+}
+
+// current implementation uses bounding boxes to detect collisions
+// potentially more fancy methods we can use, but this should do for now
+const handleCollisions = () => {
+    // replace this once we get the player objects
+    const playerObject = new Mesh(new SphereGeometry(), new MeshPhongMaterial());
+    playerObject.geometry.computeBoundingBox()
+    const playerBox = playerObject.geometry.boundingBox
+    const obstacles = scene.obstacleManager.obstacles
+    for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].computeBoundingBox();
+        if (playerBox.intersectsBox(obstacles[i].boundingBox)) {
+            handleGameOver();
+            break;
+        }
+    }
+}
+
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
+    handleCollisions();
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
