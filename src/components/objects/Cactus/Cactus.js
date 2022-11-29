@@ -35,6 +35,17 @@ class Cactus extends Group {
         // add mesh
         this.add(objMesh);
     }
+
+    garbageCollect() {
+        this.visible = false;
+    }
+
+    placeBottomAt(pos) {
+        this.position.x = pos.x; 
+        this.position.y = pos.y + this.state.height / 2; 
+        this.position.z = pos.z; 
+        this.visible = true; 
+    }
 }
 
 export default Cactus;
