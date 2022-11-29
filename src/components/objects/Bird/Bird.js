@@ -32,6 +32,8 @@ class Bird extends Group {
         this.position.y = this.state.height / 2; 
         this.position.x = -3; 
 
+        this.visible = false; 
+
         // add mesh
         this.add(objMesh);
     }
