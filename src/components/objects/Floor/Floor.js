@@ -22,7 +22,7 @@ class Floor extends Group {
       this.state.height
     );
     const objMat = new MeshBasicMaterial({
-      color: 0x006800,
+      color: 0x006900,
     })
     const objMesh = new Mesh(objGeo, objMat);
 
