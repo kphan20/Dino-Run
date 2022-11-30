@@ -49,8 +49,8 @@ const handleCollisions = () => {
     const playerBox = playerObject.geometry.boundingBox
     const obstacles = scene.obstacleManager.obstacles
     for (let i = 0; i < obstacles.length; i++) {
-        obstacles[i].computeBoundingBox();
-        if (playerBox.intersectsBox(obstacles[i].boundingBox)) {
+        obstacles[i].children[0].geometry.computeBoundingBox()
+        if (playerBox.intersectsBox(obstacles[i].children[0].geometry.boundingBox)) {
             handleGameOver();
             break;
         }
