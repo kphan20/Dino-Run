@@ -33,7 +33,10 @@ class SeedScene extends Scene {
 
         // Add floor and walls to scene
         const floor = new Floor();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2f3fa9c2a2b2bb167b070222f79cff79a836a137
         this.add(floor);
 
         // Populate GUI
