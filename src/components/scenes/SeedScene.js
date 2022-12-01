@@ -1,5 +1,6 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color } from 'three';
+import { ObstacleManager } from 'managers';
 import { Flower, Land } from 'objects';
 import { BasicLights } from 'lights';
 
@@ -23,6 +24,10 @@ class SeedScene extends Scene {
         const flower = new Flower(this);
         const lights = new BasicLights();
         this.add(land, flower, lights);
+
+        // Add obstacles to scene
+        this.obstacleManager = new ObstacleManager(this);
+        this.add(...this.obstacleManager.obstacles);
 
         // Populate GUI
         this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
