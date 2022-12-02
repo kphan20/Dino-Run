@@ -13,11 +13,13 @@ import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
 const EPS = 0.01;
+import { Hud } from './components/hud';
 
 // Initialize core ThreeJS components
 const camera = new PerspectiveCamera();
 const scene = new SeedScene(camera);
 const renderer = new WebGLRenderer({ antialias: true });
+const hud = new Hud();
 
 // Set up camera
 camera.position.set(6, 3, -10);
@@ -106,6 +108,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
     handleCollisions();
+    hud.updateScore(scene.player.position);
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
