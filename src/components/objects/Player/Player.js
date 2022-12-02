@@ -1,20 +1,22 @@
-import { Group, Mesh, CylinderGeometry, MeshPhongMaterial } from 'three';
+import { Mesh, CylinderGeometry, MeshPhongMaterial } from 'three';
 
-class Player extends Group {
+class Player extends Mesh {
     constructor(parent, camera) {
         // Call parent Group() constructor
-        super();
-
-        const test = new Mesh(new CylinderGeometry(), new MeshPhongMaterial());
-        test.add(camera);
-        this.add(test);
-        // Init state
-        this.state = {
-            gui: parent.state.gui,
-        };
+        super(new CylinderGeometry(), new MeshPhongMaterial());
+        this.add(camera);
+        this.geometry.computeBoundingBox();
 
         // Add self to parent's update list
         parent.addToUpdateList(this);
+    }
+
+    movePlayer(dx, dy, dz) {
+        this.position.x += dx;
+        this.position.y += dy;
+        this.position.z += dz;
+        this.geometry.boundingBox.min.add(this.position);
+        this.geometry.boundingBox.max.add(this.position);
     }
 
     update(timeStamp) {}
