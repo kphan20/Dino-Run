@@ -6,14 +6,7 @@
  * handles window resizes.
  *
  */
-import {
-    WebGLRenderer,
-    PerspectiveCamera,
-    Vector3,
-    Mesh,
-    SphereGeometry,
-    MeshPhongMaterial,
-} from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 
@@ -50,15 +43,11 @@ const handleGameOver = () => {
 // current implementation uses bounding boxes to detect collisions
 // potentially more fancy methods we can use, but this should do for now
 const handleCollisions = () => {
-    // replace this once we get the player objects
-    const playerObject = new Mesh(
-        new SphereGeometry(),
-        new MeshPhongMaterial()
-    );
-    playerObject.geometry.computeBoundingBox();
+    const playerObject = scene.player;
     const playerBox = playerObject.geometry.boundingBox;
     const obstacles = scene.obstacleManager.obstacles;
     for (let i = 0; i < obstacles.length; i++) {
+        // we should only compute and adjust this bounding box once
         obstacles[i].children[0].geometry.computeBoundingBox();
         if (
             playerBox.intersectsBox(
@@ -92,5 +81,5 @@ windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
-    scene.player.position.x += 3;
+    scene.player.movePlayer(3, 0, 0);
 });
