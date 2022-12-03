@@ -22,7 +22,7 @@ const renderer = new WebGLRenderer({ antialias: true });
 const hud = new Hud();
 
 // Set up camera
-camera.position.set(6, 3, -10);
+camera.position.set(0, 0, -10);
 camera.lookAt(new Vector3(0, 0, 0));
 
 // Set up renderer, canvas, and minor CSS adjustments
@@ -110,6 +110,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     handleCollisions();
     hud.updateScore(scene.player.position);
     window.requestAnimationFrame(onAnimationFrameHandler);
+    scene.player.movePlayer(0, 0, 0.01)
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 
@@ -124,7 +125,14 @@ windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
-    scene.player.movePlayer(3, 0, 0);
+    const key = e.key; 
+
+    if (key === 'ArrowLeft') {
+        scene.player.rotatePlayerLeft();  
+    } 
+    else if (key === "ArrowRight") {
+        scene.player.rotatePlayerRight();
+    }
 });
 
 window.addEventListener('keydown', (e) => {

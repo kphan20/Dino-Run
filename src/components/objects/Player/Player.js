@@ -9,12 +9,23 @@ class Player extends Mesh {
 
         // Add self to parent's update list
         parent.addToUpdateList(this);
+
+        // How much to rotate by for each key press
+        this.rotationDelta = Math.PI / 16; 
+    }
+
+    rotatePlayerLeft() {
+        this.rotation.y += this.rotationDelta; 
+    }
+
+    rotatePlayerRight() {
+        this.rotation.y -= this.rotationDelta; 
     }
 
     movePlayer(dx, dy, dz) {
-        this.position.x += dx;
-        this.position.y += dy;
-        this.position.z += dz;
+        this.translateX(dx);
+        this.translateY(dy);
+        this.translateZ(dz);
         this.geometry.boundingBox.min.add(this.position);
         this.geometry.boundingBox.max.add(this.position);
     }
