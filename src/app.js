@@ -22,7 +22,7 @@ const renderer = new WebGLRenderer({ antialias: true });
 const hud = new Hud();
 
 // Set up camera
-camera.position.set(0, 0, -10);
+camera.position.set(0, 3, -10);
 camera.lookAt(new Vector3(0, 0, 0));
 
 // Set up renderer, canvas, and minor CSS adjustments
@@ -110,7 +110,8 @@ const onAnimationFrameHandler = (timeStamp) => {
     handleCollisions();
     hud.updateScore(scene.player.position);
     window.requestAnimationFrame(onAnimationFrameHandler);
-    scene.player.movePlayer(0, 0, 0.01)
+    scene.player.movePlayer(0, 0, 0.1);
+    scene.obstacleManager.handleObstacles(scene.player.position.z);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 
