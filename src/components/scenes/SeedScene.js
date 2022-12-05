@@ -6,7 +6,7 @@ import { BasicLights } from 'lights';
 import { Player } from '../objects/Player';
 
 class SeedScene extends Scene {
-    constructor(camera) {
+    constructor(camera, playerBody) {
         // Call parent Scene() constructor
         super();
 
@@ -24,7 +24,7 @@ class SeedScene extends Scene {
         const land = new Land();
         const flower = new Flower(this);
         const lights = new BasicLights();
-        this.player = new Player(this, camera);
+        this.player = new Player(this, camera, playerBody);
         this.add(land, flower, lights, this.player);
 
         // Add obstacles to scene

@@ -12,12 +12,34 @@ import { SeedScene } from 'scenes';
 import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
-const EPS = 0.01;
 import { Hud } from './components/hud';
+
+// Handle Physics
+// Set up physics
+const physicsWorld = new CANNON.World({
+    gravity: new CANNON.Vec3(0, -9.82, 0),
+});
+
+// floor boundary using plane
+const floorBody = new CANNON.Body({
+    type: CANNON.Body.STATIC,
+    shape: new CANNON.Plane(),
+});
+// rotate so it is horizontal
+floorBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+physicsWorld.addBody(floorBody);
+
+// player object (represented by sphere)
+const playerBody = new CANNON.Body({
+    mass: 5,
+    shape: new CANNON.Cylinder(),
+});
+playerBody.position.set(0, 10, 0);
+physicsWorld.addBody(playerBody);
 
 // Initialize core ThreeJS components
 const camera = new PerspectiveCamera();
-const scene = new SeedScene(camera);
+const scene = new SeedScene(camera, playerBody);
 const renderer = new WebGLRenderer({ antialias: true });
 const hud = new Hud();
 
@@ -66,30 +88,6 @@ const handleCollisions = () => {
     }
 };
 
-// Handle Physics
-
-// Set up physics
-const physicsWorld = new CANNON.World({
-    gravity: new CANNON.Vec3(0, -9.82, 0),
-});
-
-// floor boundary using plane
-const floorBody = new CANNON.Body({
-    type: CANNON.Body.STATIC,
-    shape: new CANNON.Plane(),
-});
-// rotate so it is horizontal
-floorBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
-physicsWorld.addBody(floorBody);
-
-// player object (represented by sphere)
-const playerBody = new CANNON.Body({
-    mass: 5,
-    shape: new CANNON.Cylinder(),
-});
-playerBody.position.set(0, 10, 0);
-physicsWorld.addBody(playerBody);
-
 // cannon debugger
 // const cannonDebugger = new CannonDebugger(scene, physicsWorld);
 
@@ -107,10 +105,10 @@ const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
+    scene.player.movePlayer(0, 0, 0.1);
     handleCollisions();
     hud.updateScore(scene.player.position);
     window.requestAnimationFrame(onAnimationFrameHandler);
-    scene.player.movePlayer(0, 0, 0.1);
     scene.obstacleManager.handleObstacles(scene.player.position.z);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
@@ -134,12 +132,7 @@ window.addEventListener('keydown', (e) => {
     else if (key === "ArrowRight") {
         scene.player.rotatePlayerRight();
     }
-});
-
-window.addEventListener('keydown', (e) => {
-    const height = playerBody.shapes[0].height;
-    const exp_floor = playerBody.position.y - height / 2;
-    // console.log(exp_floor);
-    if (Math.abs(exp_floor) < EPS)
-        playerBody.velocity.set(0, 10, 0);
+    else if (key === "ArrowUp") {
+        scene.player.jumpPlayer();       
+    }
 });
