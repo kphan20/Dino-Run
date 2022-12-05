@@ -20,15 +20,35 @@ class ObstacleManager {
         this.maxX = 3; // maximum bound for x coordinate
         this.minY = 0; // minimum bound for y coordinate
         this.maxY = 0; // maximum bound for y coordinate
-        this.maxZDist = 5; // maximum distance from inputted frontier depth 
+        this.minZDist = 20; // minimum distance from inputted frontier depth
+        this.maxZDist = 30; // maximum distance from inputted frontier depth 
+
+        // chance of obstacle being generated when available per render cycle
+        this.generationProbability = 0.01; 
+    }
+
+    // render handler for obstacles
+    handleObstacles(frontierDepth) {
+        this.cleanUpObstacles(frontierDepth);
+        this.generateObstacle(frontierDepth);
     }
 
     // place an obstacle at a random position in front of frontier depth 
     generateObstacle(frontierDepth) {
+        // return if no obstacles exist at the moment
+        if (this.inactiveObstacleSet.size === 0) {
+            return;
+        }
+
+        // chance of obstacle 
+        if (Math.random() > this.generationProbability) {
+            return;
+        }
+
         // generate random coordinates
         const x = this.generateIntBetween(this.minX, this.maxX);
         const y = this.generateIntBetween(this.minY, this.maxY);
-        const z = this.generateIntBetween(frontierDepth, frontierDepth + this.maxZDist);
+        const z = this.generateIntBetween(frontierDepth + this.minZDist, frontierDepth + this.maxZDist);
         const pos = new Vector3(x, y, z);
         const inactiveObstacle = [...this.inactiveObstacleSet.keys()][0];
         inactiveObstacle.placeBottomAt(pos);
