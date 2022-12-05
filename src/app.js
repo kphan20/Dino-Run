@@ -94,7 +94,7 @@ physicsWorld.addBody(playerBody);
 // run physics simulation
 const animate = () => {
     physicsWorld.fixedStep();
-    cannonDebugger.update();
+    // cannonDebugger.update();
     scene.player.position.copy(playerBody.position);
     window.requestAnimationFrame(animate);
 };
