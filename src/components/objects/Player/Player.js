@@ -19,7 +19,7 @@ class Player extends Mesh {
         this.geometry.boundingBox.max.add(this.position);
     }
 
-    update(timeStamp) {}
+    update(timeStamp) { }
 }
 
 export default Player;

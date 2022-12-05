@@ -6,9 +6,13 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3, RGB_S3TC_DXT1_Format } from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
+import * as CANNON from 'cannon-es';
+import CannonDebugger from 'cannon-es-debugger';
+
+const EPS = 0.01;
 
 // Initialize core ThreeJS components
 const camera = new PerspectiveCamera();
@@ -60,6 +64,42 @@ const handleCollisions = () => {
     }
 };
 
+// Handle Physics
+
+// Set up physics
+const physicsWorld = new CANNON.World({
+    gravity: new CANNON.Vec3(0, -9.82, 0),
+});
+
+// floor boundary using plane
+const floorBody = new CANNON.Body({
+    type: CANNON.Body.STATIC,
+    shape: new CANNON.Plane(),
+});
+// rotate so it is horizontal
+floorBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+physicsWorld.addBody(floorBody);
+
+// player object (represented by sphere)
+const playerBody = new CANNON.Body({
+    mass: 5,
+    shape: new CANNON.Cylinder(),
+});
+playerBody.position.set(0, 10, 0);
+physicsWorld.addBody(playerBody);
+
+// cannon debugger
+const cannonDebugger = new CannonDebugger(scene, physicsWorld);
+
+// run physics simulation
+const animate = () => {
+    physicsWorld.fixedStep();
+    cannonDebugger.update();
+    scene.player.position.copy(playerBody.position);
+    window.requestAnimationFrame(animate);
+};
+animate();
+
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
@@ -82,4 +122,12 @@ window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
     scene.player.movePlayer(3, 0, 0);
+});
+
+window.addEventListener('keydown', (e) => {
+    const height = playerBody.shapes[0].height;
+    const exp_floor = playerBody.position.y - height / 2;
+    // console.log(exp_floor);
+    if (Math.abs(exp_floor) < EPS)
+        playerBody.velocity.set(0, 10, 0);
 });
