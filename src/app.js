@@ -89,7 +89,7 @@ playerBody.position.set(0, 10, 0);
 physicsWorld.addBody(playerBody);
 
 // cannon debugger
-const cannonDebugger = new CannonDebugger(scene, physicsWorld);
+// const cannonDebugger = new CannonDebugger(scene, physicsWorld);
 
 // run physics simulation
 const animate = () => {
