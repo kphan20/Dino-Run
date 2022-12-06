@@ -5,7 +5,7 @@ import {
     MeshBasicMaterial
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import MODEL from './scene.gltf';
+import MODEL from './bird.gltf';
 
 // Basic structure and organization derived from starter code for Flower.js
 class Bird extends Group {
