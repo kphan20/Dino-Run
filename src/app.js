@@ -6,7 +6,12 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3, RGB_S3TC_DXT1_Format } from 'three';
+import {
+    WebGLRenderer,
+    PerspectiveCamera,
+    Vector3,
+    RGB_S3TC_DXT1_Format,
+} from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 import * as CANNON from 'cannon-es';
@@ -124,15 +129,13 @@ windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
-    const key = e.key; 
+    const key = e.key;
 
     if (key === 'ArrowLeft') {
-        scene.player.rotatePlayerLeft();  
-    } 
-    else if (key === "ArrowRight") {
+        scene.player.rotatePlayerLeft();
+    } else if (key === 'ArrowRight') {
         scene.player.rotatePlayerRight();
-    }
-    else if (key === "ArrowUp") {
-        scene.player.jumpPlayer();       
+    } else if (key === 'ArrowUp') {
+        scene.player.jumpPlayer();
     }
 });
