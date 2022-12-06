@@ -18,6 +18,8 @@ import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
 import { Hud } from './components/hud';
+import deathSound from './resources/death.mp3';
+import jumpSound from './resources/boing.mp3';
 
 // Handle Physics
 // Set up physics
@@ -69,8 +71,11 @@ document.body.appendChild(canvas);
 // controls.update();
 
 // placeholder for handling game ending
+let gameOver = false;
 const handleGameOver = () => {
-    console.log('You Lost!');
+    gameOver = true;
+    const audio = new Audio(deathSound);
+    audio.play();
 };
 
 // current implementation uses bounding boxes to detect collisions
@@ -98,9 +103,11 @@ const handleCollisions = () => {
 
 // run physics simulation
 const animate = () => {
-    physicsWorld.fixedStep();
-    // cannonDebugger.update();
-    scene.player.position.copy(playerBody.position);
+    if (!gameOver) {
+        physicsWorld.fixedStep();
+        // cannonDebugger.update();
+        scene.player.position.copy(playerBody.position);
+    }
     window.requestAnimationFrame(animate);
 };
 animate();
@@ -110,11 +117,13 @@ const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
-    scene.player.movePlayer(0, 0, 0.1);
-    handleCollisions();
-    hud.updateScore(scene.player.position);
+    if (!gameOver) {
+        scene.player.movePlayer(0, 0, 0.1);
+        handleCollisions();
+        hud.updateScore(scene.player.position);
+        scene.obstacleManager.handleObstacles(scene.player.position.z);
+    }
     window.requestAnimationFrame(onAnimationFrameHandler);
-    scene.obstacleManager.handleObstacles(scene.player.position.z);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 
@@ -130,12 +139,17 @@ window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
     const key = e.key;
+    if (gameOver) return;
 
     if (key === 'ArrowLeft') {
         scene.player.rotatePlayerLeft();
     } else if (key === 'ArrowRight') {
         scene.player.rotatePlayerRight();
     } else if (key === 'ArrowUp') {
-        scene.player.jumpPlayer();
+        const jumped = scene.player.jumpPlayer();
+        if (jumped) {
+            const audio = new Audio(jumpSound);
+            audio.play();
+        }
     }
 });
