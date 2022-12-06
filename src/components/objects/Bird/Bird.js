@@ -1,4 +1,10 @@
-import { BoxGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
+import { 
+    BoxGeometry, 
+    Group, 
+    Mesh, 
+    MeshBasicMaterial 
+} from 'three';
+import MODEL from './scene.gltf';
 
 // Basic structure and organization derived from starter code for Flower.js
 class Bird extends Group {
@@ -12,16 +18,24 @@ class Bird extends Group {
             depth: 1.0,
         };
 
-        // create object mesh (Example followed https://threejs.org/manual/#en/fundamentals)
-        const objGeo = new BoxGeometry(
-            this.state.width,
-            this.state.height,
-            this.state.depth
-        );
-        const objMat = new MeshBasicMaterial({
-            color: 0x44aa88,
+        // Load object
+        const loader = new GLTFLoader();
+
+        this.name = 'flower';
+        loader.load(MODEL, (gltf) => {
+            this.add(gltf.scene);
         });
-        const objMesh = new Mesh(objGeo, objMat);
+
+        // // create object mesh (Example followed https://threejs.org/manual/#en/fundamentals)
+        // const objGeo = new BoxGeometry(
+        //     this.state.width, 
+        //     this.state.height, 
+        //     this.state.depth,
+        // );
+        // const objMat = new MeshBasicMaterial({
+        //     color: 0x44aa88,
+        // })
+        // const objMesh = new Mesh(objGeo, objMat);
 
         // set object bottom to 0
         this.position.y = this.state.height / 2;
@@ -29,8 +43,8 @@ class Bird extends Group {
 
         this.visible = false;
 
-        // add mesh
-        this.add(objMesh);
+        // // add mesh
+        // this.add(objMesh);
     }
 
     garbageCollect() {
