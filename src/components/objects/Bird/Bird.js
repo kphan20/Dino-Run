@@ -1,9 +1,10 @@
-import { 
-    BoxGeometry, 
-    Group, 
-    Mesh, 
-    MeshBasicMaterial 
+import {
+    BoxGeometry,
+    Group,
+    Mesh,
+    MeshBasicMaterial
 } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import MODEL from './scene.gltf';
 
 // Basic structure and organization derived from starter code for Flower.js
@@ -57,6 +58,7 @@ class Bird extends Group {
         this.position.z = pos.z;
         this.visible = true;
     }
+
     updateBoundingBox() {
         const geo = this.children[0].geometry;
         geo.computeBoundingBox();
