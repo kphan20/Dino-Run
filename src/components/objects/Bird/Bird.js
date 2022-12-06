@@ -14,23 +14,24 @@ class Bird extends Group {
 
         // Set object state
         this.state = {
+            // gui: parent.state.gui,
             width: 1.0,
             height: 2.0,
             depth: 1.0,
         };
 
-        // Load object
+        // // Load object
         const loader = new GLTFLoader();
 
-        this.name = 'flower';
-        loader.load(MODEL, (gltf) => {
+        this.name = 'bird';
+        loader.load('src/components/objects/Bird/scene.gltf', (gltf) => {
             this.add(gltf.scene);
         });
 
-        // // create object mesh (Example followed https://threejs.org/manual/#en/fundamentals)
+        // create object mesh (Example followed https://threejs.org/manual/#en/fundamentals)
         // const objGeo = new BoxGeometry(
-        //     this.state.width, 
-        //     this.state.height, 
+        //     this.state.width,
+        //     this.state.height,
         //     this.state.depth,
         // );
         // const objMat = new MeshBasicMaterial({
@@ -39,12 +40,12 @@ class Bird extends Group {
         // const objMesh = new Mesh(objGeo, objMat);
 
         // set object bottom to 0
-        this.position.y = this.state.height / 2;
-        this.position.x = -3;
+        // this.position.y = this.state.height / 2;
+        // this.position.x = -3;
 
-        this.visible = false;
+        // this.visible = false;
 
-        // // add mesh
+        // add mesh
         // this.add(objMesh);
     }
 
