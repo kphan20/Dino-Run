@@ -6,7 +6,8 @@ import MODEL from './low_poly_bird/scene.gltf';
 // Basic structure and organization derived from starter code for Flower.js
 class Bird extends Group {
     constructor(parent) {
-        super();
+        super(); 
+        this.frustumCulled = false;
 
         // Set object state
         this.state = {
@@ -54,7 +55,6 @@ class Bird extends Group {
     }
 
     garbageCollect() {
-        this.visible = false;
     }
 
     placeBottomAt(pos) {

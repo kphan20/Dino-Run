@@ -9,6 +9,9 @@ import {
   class Floor extends Group {
     constructor(parent) {
       super();
+
+      // Disable automatic frustum culling (to use manual implementation)
+      this.frustumCulled = false; 
   
       // Set object state
       this.state = {
@@ -77,6 +80,7 @@ import {
       })
   
       const objMesh = new Mesh(objGeo, objMat);
+      objMesh.frustumCulled = false;
   
       // rotate mesh to align horizontally
       objMesh.rotateX(Math.PI / -2);
