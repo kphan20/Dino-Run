@@ -1,8 +1,11 @@
 import {
     PlaneGeometry,
     Group,
+    MathUtils,
     Mesh,
-    ShaderMaterial
+    MirroredRepeatWrapping,
+    TextureLoader,
+    MeshBasicMaterial,
   } from 'three';
   
   // Basic structure and organization derived from starter code for Flower.js
@@ -73,23 +76,30 @@ import {
         `
       }
   
+      const loader = new TextureLoader();
+      const objMat = new MeshBasicMaterial({
+        map: loader.load('resources/sand.jpeg', (texture) => {
+            texture.wrapS =MirroredRepeatWrapping; 
+            texture.wrapT = MirroredRepeatWrapping;
+            texture.rotation = MathUtils.degToRad(57);
+            // console.log(texture)
+            texture.repeat.set(500, 500)
 
-      const objMat = new ShaderMaterial({
-          fragmentShader: fragmentShader(),
-          vertexShader: vertexShader()
+            const objMesh = new Mesh(objGeo, objMat);
+  
+            // rotate mesh to align horizontally
+            objMesh.rotateX(Math.PI / -2);
+        
+            // set object position
+            this.position.y = -2;
+        
+            // add mesh
+            this.add(objMesh);            
+        }),
       })
   
       const objMesh = new Mesh(objGeo, objMat);
       objMesh.frustumCulled = false;
-  
-      // rotate mesh to align horizontally
-      objMesh.rotateX(Math.PI / -2);
-  
-      // set object position
-      this.position.y = -2;
-  
-      // add mesh
-      this.add(objMesh);
     }
   }
   
