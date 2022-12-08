@@ -10,17 +10,21 @@ class Bird extends Group {
 
         // Set object state
         this.state = {
-            // gui: parent.state.gui,
-            width: 1.0,
-            height: 2.0,
-            depth: 1.0,
+            width: 5.0,
+            height: 10.0,
+            depth: 5.0,
         };
 
         const loader = new GLTFLoader();
         loader.setResourcePath('src/components/objects/Bird/low_poly_bird/');
         this.name = 'bird';
+
         this.originalBoundingBox = new Box3();
+
         loader.load(MODEL, (gltf) => {
+
+            gltf.scene.scale.setScalar(5);
+
             this.add(gltf.scene);
             const geometries = [];
             gltf.scene.traverse((child) => {
