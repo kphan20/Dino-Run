@@ -1,11 +1,7 @@
-import {
-    BoxGeometry,
-    Group,
-    Mesh,
-    MeshBasicMaterial
-} from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import MODEL from './bird.gltf';
+// import { BoxGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
+import { Box3, Group, Vector3 } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import MODEL from './low_poly_bird/scene.gltf';
 
 // Basic structure and organization derived from starter code for Flower.js
 class Bird extends Group {
@@ -20,33 +16,38 @@ class Bird extends Group {
             depth: 1.0,
         };
 
-        // // Load object
         const loader = new GLTFLoader();
-
+        loader.setResourcePath('src/components/objects/Bird/low_poly_bird/');
         this.name = 'bird';
-        loader.load('src/components/objects/Bird/scene.gltf', (gltf) => {
+        this.originalBoundingBox = new Box3();
+        loader.load(MODEL, (gltf) => {
             this.add(gltf.scene);
+            const geometries = [];
+            gltf.scene.traverse((child) => {
+                if (child.isMesh) {
+                    geometries.push(child.geometry);
+                }
+            });
+            const newMin = new Vector3(Infinity, Infinity, Infinity);
+            const newMax = new Vector3(-Infinity, -Infinity, -Infinity);
+            geometries.forEach((geo) => {
+                geo.computeBoundingBox();
+                const bbox = geo.boundingBox;
+                const min = bbox.min;
+                const max = bbox.max;
+                newMin.x = Math.min(newMin.x, min.x);
+                newMin.y = Math.min(newMin.y, min.y);
+                newMin.z = Math.min(newMin.z, min.z);
+                newMax.x = Math.max(newMax.x, max.x);
+                newMax.y = Math.max(newMax.y, max.y);
+                newMax.z = Math.max(newMax.z, max.z);
+            });
+            this.originalBoundingBox.min = newMin;
+            this.originalBoundingBox.max = newMax;
         });
+        this.boundingBox = this.originalBoundingBox.clone();
 
-        // create object mesh (Example followed https://threejs.org/manual/#en/fundamentals)
-        // const objGeo = new BoxGeometry(
-        //     this.state.width,
-        //     this.state.height,
-        //     this.state.depth,
-        // );
-        // const objMat = new MeshBasicMaterial({
-        //     color: 0x44aa88,
-        // })
-        // const objMesh = new Mesh(objGeo, objMat);
-
-        // set object bottom to 0
-        // this.position.y = this.state.height / 2;
-        // this.position.x = -3;
-
-        // this.visible = false;
-
-        // add mesh
-        // this.add(objMesh);
+        this.visible = false;
     }
 
     garbageCollect() {
@@ -59,16 +60,16 @@ class Bird extends Group {
         this.position.z = pos.z;
         this.visible = true;
     }
-
+    
     updateBoundingBox() {
-        const geo = this.children[0].geometry;
-        geo.computeBoundingBox();
-        geo.boundingBox.translate(this.position);
+        this.boundingBox = this.originalBoundingBox
+            .clone()
+            .translate(this.position);
     }
 
     checkCollision(playerBox) {
         this.updateBoundingBox();
-        return playerBox.intersectsBox(this.children[0].geometry.boundingBox);
+        return playerBox.intersectsBox(this.boundingBox);
     }
 }
 
