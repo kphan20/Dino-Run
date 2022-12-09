@@ -48,7 +48,10 @@ physicsWorld.addBody(playerBody);
 const camera = new PerspectiveCamera();
 const scene = new SeedScene(camera, playerBody);
 const renderer = new WebGLRenderer({ antialias: true });
-const hud = new Hud();
+const pauseFunc = () => {
+    console.log('hello');
+};
+const hud = new Hud(pauseFunc);
 
 // Set up camera
 const FRONT_VIEW = new Vector3(0, 3, -2);
@@ -101,7 +104,7 @@ const handleCollisions = () => {
 
 // run physics simulation
 const animate = () => {
-    if (!gameOver) {
+    if (!gameOver && !hud.isPaused) {
         physicsWorld.fixedStep();
         // cannonDebugger.update();
         scene.player.position.copy(playerBody.position);
@@ -115,7 +118,8 @@ const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
-    if (!gameOver) {
+
+    if (!gameOver && !hud.isPaused) {
         scene.player.movePlayer(0, 0, 0.1);
         handleCollisions();
         hud.updateScore(scene.player.position);
@@ -137,7 +141,7 @@ window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
     const key = e.key;
-    if (gameOver) return;
+    if (gameOver || hud.isPaused) return;
 
     if (key === 'ArrowLeft') {
         scene.player.rotatePlayerLeft();
