@@ -31,36 +31,13 @@ class PebbleManager {
             newPebble.position.y = y; 
             newPebble.position.z = z; 
             this.pebbles.push(newPebble);
-        }        
+        }      
     }
 
     // update pebbles
     handlePebbles(frontierDepth) {
-        // player should be halfway through the grid
-        const halfWayThroughGrid = this.minZ + (this.maxZ - this.minZ) / 2; 
-        if (frontierDepth < halfWayThroughGrid) return; 
-
         // update entire grid of pebbles
         this.cleanUpPebbles(frontierDepth);
-
-        this.minZ = this.maxZ; 
-        this.maxZ = this.minZ + this.gridZDelta; 
-
-        const inactivePebbles = [...this.inactivePebbleSet.keys()];
-        for (let i = 0; i < inactivePebbles.length; i++) {
-            const pebble = inactivePebbles[i];
-            const x = this.generateIntBetween(this.minX, this.maxX);
-            const y = 0; 
-            const z = this.generateIntBetween(
-                this.minZ,
-                this.maxZ
-            );            
-            pebble.position.x = x; 
-            pebble.position.y = y; 
-            pebble.position.z = z; 
-        }
-
-        this.inactivePebbleSet.clear();
     }
 
     // helper function to generate random integer between min (inclusive) and max (inclusive)
@@ -79,7 +56,13 @@ class PebbleManager {
                 continue;
             } else {
                 if (pebble.position.z < frontierDepth) {
-                    this.inactivePebbleSet.add(pebble);
+                    // this.inactivePebbleSet.add(pebble);
+                    const x = this.generateIntBetween(this.minX, this.maxX);
+                    const y = 0; 
+                    const z = frontierDepth + 200;   
+                    pebble.position.x = x; 
+                    pebble.position.y = y; 
+                    pebble.position.z = z; 
                 }
             }
         }
