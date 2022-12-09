@@ -51,7 +51,10 @@ const renderer = new WebGLRenderer({ antialias: true });
 const hud = new Hud();
 
 // Set up camera
-camera.position.set(0, 3, -10);
+const FRONT_VIEW = new Vector3(0, 3, -2);
+const BACK_VIEW = new Vector3(0, 3, -10);
+
+camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
 camera.lookAt(new Vector3(0, 0, 0));
 
 // Set up renderer, canvas, and minor CSS adjustments
@@ -146,5 +149,10 @@ window.addEventListener('keydown', (e) => {
             const audio = new Audio(jumpSound);
             audio.play();
         }
+    } else if (key === "v") {
+        if (camera.position.z == BACK_VIEW.z)
+            camera.position.set(FRONT_VIEW.x, FRONT_VIEW.y, FRONT_VIEW.z);
+        else
+            camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);        
     }
 });
