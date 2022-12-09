@@ -6,13 +6,20 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3, RGB_S3TC_DXT1_Format } from 'three';
+import {
+    WebGLRenderer,
+    PerspectiveCamera,
+    Vector3,
+    RGB_S3TC_DXT1_Format,
+} from 'three';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
 import { Hud } from './components/hud';
+import deathSound from './resources/death.mp3';
+import jumpSound from './resources/boing.mp3';
 
 // Handle Physics
 // Set up physics
@@ -64,8 +71,11 @@ document.body.appendChild(canvas);
 // controls.update();
 
 // placeholder for handling game ending
+let gameOver = false;
 const handleGameOver = () => {
-    console.log('You Lost!');
+    gameOver = true;
+    const audio = new Audio(deathSound);
+    audio.play();
 };
 
 // current implementation uses bounding boxes to detect collisions
@@ -76,12 +86,7 @@ const handleCollisions = () => {
     const obstacles = scene.obstacleManager.obstacles;
     for (let i = 0; i < obstacles.length; i++) {
         // we should only compute and adjust this bounding box once
-        obstacles[i].children[0].geometry.computeBoundingBox();
-        if (
-            playerBox.intersectsBox(
-                obstacles[i].children[0].geometry.boundingBox
-            )
-        ) {
+        if (obstacles[i].checkCollision(playerBox)) {
             handleGameOver();
             break;
         }
@@ -93,9 +98,11 @@ const handleCollisions = () => {
 
 // run physics simulation
 const animate = () => {
-    physicsWorld.fixedStep();
-    // cannonDebugger.update();
-    scene.player.position.copy(playerBody.position);
+    if (!gameOver) {
+        physicsWorld.fixedStep();
+        // cannonDebugger.update();
+        scene.player.position.copy(playerBody.position);
+    }
     window.requestAnimationFrame(animate);
 };
 animate();
@@ -105,11 +112,13 @@ const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
-    scene.player.movePlayer(0, 0, 0.1);
-    handleCollisions();
-    hud.updateScore(scene.player.position);
+    if (!gameOver) {
+        scene.player.movePlayer(0, 0, 0.1);
+        handleCollisions();
+        hud.updateScore(scene.player.position);
+        scene.obstacleManager.handleObstacles(scene.player.position.z);
+    }
     window.requestAnimationFrame(onAnimationFrameHandler);
-    scene.obstacleManager.handleObstacles(scene.player.position.z);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 
@@ -124,15 +133,18 @@ windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
-    const key = e.key; 
+    const key = e.key;
+    if (gameOver) return;
 
     if (key === 'ArrowLeft') {
-        scene.player.rotatePlayerLeft();  
-    } 
-    else if (key === "ArrowRight") {
+        scene.player.rotatePlayerLeft();
+    } else if (key === 'ArrowRight') {
         scene.player.rotatePlayerRight();
-    }
-    else if (key === "ArrowUp") {
-        scene.player.jumpPlayer();       
+    } else if (key === 'ArrowUp') {
+        const jumped = scene.player.jumpPlayer();
+        if (jumped) {
+            const audio = new Audio(jumpSound);
+            audio.play();
+        }
     }
 });

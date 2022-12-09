@@ -38,9 +38,10 @@ class Player extends Mesh {
         const EPS = 0.01;
         const height = this.playerBody.shapes[0].height;
         const exp_floor = this.playerBody.position.y - height / 2;
-        if (Math.abs(exp_floor) < EPS)
-            this.playerBody.velocity.set(0, 10, 0);     
-        this.position.copy(this.playerBody.position);           
+        const onGround = Math.abs(exp_floor) < EPS;
+        if (onGround) this.playerBody.velocity.set(0, 10, 0);
+        this.position.copy(this.playerBody.position);
+        return onGround;
     }
 
     update(timeStamp) { }
