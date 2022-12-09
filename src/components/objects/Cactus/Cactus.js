@@ -1,6 +1,15 @@
-import { Box3, Group, Vector3 } from 'three';
+import {
+    Box3,
+    Group,
+    Vector3,
+    BoxBufferGeometry,
+    Matrix4,
+    WireframeGeometry,
+    LineSegments,
+} from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import MODEL from './cactus_files/scene.gltf';
+import MODEL from './cactus_files2/scene.gltf';
+import MODEL2 from './cactus.gltf';
 
 // Basic structure and organization derived from starter code for Flower.js
 class Cactus extends Group {
@@ -15,33 +24,43 @@ class Cactus extends Group {
         };
 
         const loader = new GLTFLoader();
-        loader.setResourcePath('src/components/objects/Cactus/cactus_files/');
+        //loader.setResourcePath('src/components/objects/Cactus/cactus-threejs/');
         this.name = 'cacti';
         this.originalBoundingBox = new Box3();
-        loader.load(MODEL, (gltf) => {
+        loader.load(MODEL2, (gltf) => {
+            gltf.scene.scale.set(0.5, 0.5, 0.5);
             this.add(gltf.scene);
-            const geometries = [];
-            gltf.scene.traverse((child) => {
-                if (child.isMesh) {
-                    geometries.push(child.geometry);
-                }
-            });
-            const newMin = new Vector3(Infinity, Infinity, Infinity);
-            const newMax = new Vector3(-Infinity, -Infinity, -Infinity);
-            geometries.forEach((geo) => {
-                geo.computeBoundingBox();
-                const bbox = geo.boundingBox;
-                const min = bbox.min;
-                const max = bbox.max;
-                newMin.x = Math.min(newMin.x, min.x);
-                newMin.y = Math.min(newMin.y, min.y);
-                newMin.z = Math.min(newMin.z, min.z);
-                newMax.x = Math.max(newMax.x, max.x);
-                newMax.y = Math.max(newMax.y, max.y);
-                newMax.z = Math.max(newMax.z, max.z);
-            });
-            this.originalBoundingBox.min = newMin;
-            this.originalBoundingBox.max = newMax;
+            this.originalBoundingBox.setFromObject(gltf.scene);
+            gltf.scene.position.y =
+                -(
+                    this.originalBoundingBox.max.y -
+                    this.originalBoundingBox.min.y
+                ) / 2;
+            this.originalBoundingBox.setFromObject(gltf.scene);
+            const dimensions = new Vector3().subVectors(
+                this.originalBoundingBox.max,
+                this.originalBoundingBox.min
+            );
+            const boxGeo = new BoxBufferGeometry(
+                dimensions.x,
+                dimensions.y,
+                dimensions.z
+            );
+            const matrix = new Matrix4().setPosition(
+                dimensions
+                    .addVectors(
+                        this.originalBoundingBox.min,
+                        this.originalBoundingBox.max
+                    )
+                    .multiplyScalar(0.5)
+            );
+            boxGeo.applyMatrix4(matrix);
+            this.wireframe = new WireframeGeometry(boxGeo);
+            const line = new LineSegments(this.wireframe);
+            line.material.depthTest = false;
+            line.material.opacity = 0.25;
+            line.material.transparent = true;
+            this.add(line);
         });
         this.boundingBox = this.originalBoundingBox.clone();
 
@@ -66,6 +85,8 @@ class Cactus extends Group {
     }
 
     checkCollision(playerBox) {
+        if (!this.visible) return false;
+        this.updateBoundingBox();
         return playerBox.intersectsBox(this.boundingBox);
     }
 }

@@ -22,6 +22,9 @@ class Flower extends Group {
         this.name = 'flower';
         loader.load(MODEL, (gltf) => {
             this.add(gltf.scene);
+            gltf.scene.children[0].children[2].material.color.setHex(0xffffff);
+            console.log(gltf.scene);
+            console.log(this.children);
         });
 
         // Add self to parent's update list

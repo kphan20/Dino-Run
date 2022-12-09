@@ -47,11 +47,11 @@ physicsWorld.addBody(playerBody);
 // Initialize core ThreeJS components
 const camera = new PerspectiveCamera();
 const scene = new SeedScene(camera, playerBody);
-const renderer = new WebGLRenderer({ antialias: true });
-const pauseFunc = () => {
-    console.log('hello');
-};
-const hud = new Hud(pauseFunc);
+const renderer = new WebGLRenderer({
+    antialias: true,
+    powerPreference: 'high-performance',
+});
+const hud = new Hud();
 
 // Set up camera
 const FRONT_VIEW = new Vector3(0, 3, -2);
@@ -153,10 +153,9 @@ window.addEventListener('keydown', (e) => {
             const audio = new Audio(jumpSound);
             audio.play();
         }
-    } else if (key === "v") {
+    } else if (key === 'v') {
         if (camera.position.z == BACK_VIEW.z)
             camera.position.set(FRONT_VIEW.x, FRONT_VIEW.y, FRONT_VIEW.z);
-        else
-            camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);        
+        else camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
     }
 });
