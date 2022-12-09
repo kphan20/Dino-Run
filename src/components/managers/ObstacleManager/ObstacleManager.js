@@ -10,7 +10,7 @@ class ObstacleManager {
         this.obstacles.push(new Cactus(obstacleParent));
         this.obstacles.push(new Bird(obstacleParent));
 
-        // add all obstacles initially to inactive obstacle set 
+        // add all obstacles initially to inactive obstacle set
         for (let i = 0; i < this.obstacles.length; i++) {
             this.inactiveObstacleSet.add(this.obstacles[i]);
         }
@@ -21,10 +21,10 @@ class ObstacleManager {
         this.minY = 0; // minimum bound for y coordinate
         this.maxY = 0; // maximum bound for y coordinate
         this.minZDist = 20; // minimum distance from inputted frontier depth
-        this.maxZDist = 30; // maximum distance from inputted frontier depth 
+        this.maxZDist = 30; // maximum distance from inputted frontier depth
 
         // chance of obstacle being generated when available per render cycle
-        this.generationProbability = 0.01; 
+        this.generationProbability = 0.01;
     }
 
     // render handler for obstacles
@@ -33,14 +33,14 @@ class ObstacleManager {
         this.generateObstacle(frontierDepth);
     }
 
-    // place an obstacle at a random position in front of frontier depth 
+    // place an obstacle at a random position in front of frontier depth
     generateObstacle(frontierDepth) {
         // return if no obstacles exist at the moment
         if (this.inactiveObstacleSet.size === 0) {
             return;
         }
 
-        // chance of obstacle 
+        // chance of obstacle
         if (Math.random() > this.generationProbability) {
             return;
         }
@@ -48,16 +48,20 @@ class ObstacleManager {
         // generate random coordinates
         const x = this.generateIntBetween(this.minX, this.maxX);
         const y = this.generateIntBetween(this.minY, this.maxY);
-        const z = this.generateIntBetween(frontierDepth + this.minZDist, frontierDepth + this.maxZDist);
+        const z = this.generateIntBetween(
+            frontierDepth + this.minZDist,
+            frontierDepth + this.maxZDist
+        );
         const pos = new Vector3(x, y, z);
         const inactiveObstacle = [...this.inactiveObstacleSet.keys()][0];
         inactiveObstacle.placeBottomAt(pos);
         this.inactiveObstacleSet.delete(inactiveObstacle);
+        inactiveObstacle.updateBoundingBox();
     }
 
     // helper function to generate random integer between min (inclusive) and max (inclusive)
     generateIntBetween(min, max) {
-        const range = max - min + 1; 
+        const range = max - min + 1;
         return min + Math.floor(Math.random() * range);
     }
 
@@ -65,12 +69,11 @@ class ObstacleManager {
     cleanUpObstacles(frontierDepth) {
         // clean up active obstacles if they are behind frontier depth
         for (let i = 0; i < this.obstacles.length; i++) {
-            const obstacle = this.obstacles[i]; 
+            const obstacle = this.obstacles[i];
             // do not check if obstacle is inactive
             if (this.inactiveObstacleSet.has(obstacle)) {
                 continue;
-            }
-            else {
+            } else {
                 if (obstacle.position.z < frontierDepth) {
                     obstacle.garbageCollect();
                     this.inactiveObstacleSet.add(obstacle);
@@ -80,4 +83,4 @@ class ObstacleManager {
     }
 }
 
-export default ObstacleManager; 
+export default ObstacleManager;
