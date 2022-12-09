@@ -11,7 +11,7 @@ import MODEL from './pebble_files1/scene.gltf';
 
 
 class Pebble extends Object3D {
-    constructor(parent) {
+    constructor() {
         super(); 
         this.frustumCulled = false; 
         this.name = 'pebble';

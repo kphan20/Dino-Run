@@ -7,7 +7,7 @@ import MODEL from './low_poly_bird/scene.gltf';
 // Basic structure and organization derived from starter code for Flower.js
 class Bird extends Group {
     constructor() {
-        super();
+        super(); 
         this.frustumCulled = false;
 
         // Set object state
@@ -17,6 +17,8 @@ class Bird extends Group {
             depth: 5.0,
         };
 
+        const loader = new GLTFLoader();
+        loader.setResourcePath('src/components/objects/Bird/low_poly_bird/');
         this.name = 'bird';
         this.originalBoundingBox = new Box3();
         this.boundingBox = this.originalBoundingBox.clone();
