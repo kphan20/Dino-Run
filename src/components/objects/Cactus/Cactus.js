@@ -31,7 +31,12 @@ class Cactus extends Group {
             gltf.scene.scale.set(0.5, 0.5, 0.5);
             this.add(gltf.scene);
             this.originalBoundingBox.setFromObject(gltf.scene);
-
+            gltf.scene.position.y =
+                -(
+                    this.originalBoundingBox.max.y -
+                    this.originalBoundingBox.min.y
+                ) / 2;
+            this.originalBoundingBox.setFromObject(gltf.scene);
             const dimensions = new Vector3().subVectors(
                 this.originalBoundingBox.max,
                 this.originalBoundingBox.min
@@ -80,6 +85,8 @@ class Cactus extends Group {
     }
 
     checkCollision(playerBox) {
+        console.log(this.boundingBox, playerBox);
+        this.updateBoundingBox();
         return playerBox.intersectsBox(this.boundingBox);
     }
 }
