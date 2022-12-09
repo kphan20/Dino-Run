@@ -22,7 +22,6 @@ class Bird extends Group {
         this.originalBoundingBox = new Box3();
 
         loader.load(MODEL, (gltf) => {
-
             gltf.scene.scale.setScalar(5);
 
             this.add(gltf.scene);
@@ -64,7 +63,7 @@ class Bird extends Group {
         this.position.z = pos.z;
         this.visible = true;
     }
-    
+
     updateBoundingBox() {
         this.boundingBox = this.originalBoundingBox
             .clone()

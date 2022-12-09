@@ -51,6 +51,10 @@ module.exports = {
             scenes$: path.resolve(__dirname, 'src/components/scenes'),
             managers$: path.resolve(__dirname, 'src/components/managers'),
             resources$: path.resolve(__dirname, 'src/resources'),
+            textures$: path.resolve(
+                __dirname,
+                'src/components/objects/Cactus/cactus_files/textures'
+            ),
         },
     },
     plugins: [
