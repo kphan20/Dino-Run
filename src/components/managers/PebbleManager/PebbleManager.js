@@ -13,7 +13,7 @@ class PebbleManager {
         this.maxX = 30; 
         this.minY = 0; 
         this.maxY = 0; 
-        this.gridZDelta = 300; 
+        this.gridZDelta = 150; 
         this.minZ = 0; 
         this.maxZ = this.gridZDelta; 
 
