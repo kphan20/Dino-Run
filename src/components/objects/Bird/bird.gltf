@@ -1,0 +1,386 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 536,
+      "max": [
+        2.1716160774230957,
+        3.814877510070801,
+        -2.5035128593444824
+      ],
+      "min": [
+        -2.1716160774230957,
+        3.1547398567199707,
+        -9.041783332824707
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 6432,
+      "componentType": 5126,
+      "count": 536,
+      "max": [
+        0.9962068796157837,
+        0.9905332922935486,
+        0.9517225027084351
+      ],
+      "min": [
+        -0.9962068796157837,
+        -0.990533709526062,
+        -0.9294500350952148
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 536,
+      "max": [
+        0.9629374146461487,
+        0.9964317083358765,
+        0.9996129870414734,
+        1.0
+      ],
+      "min": [
+        -0.9421646595001221,
+        -0.9964317083358765,
+        -0.9998963475227356,
+        1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 536,
+      "max": [
+        0.970392107963562,
+        0.6759802103042603
+      ],
+      "min": [
+        0.6719709634780884,
+        0.629956066608429
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 804,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 12864,
+      "componentType": 5126,
+      "count": 3396,
+      "max": [
+        13.97799301147461,
+        8.502079963684082,
+        6.556307792663574
+      ],
+      "min": [
+        -13.97799301147461,
+        1.5713045597076416,
+        -3.3374083042144775
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 53616,
+      "componentType": 5126,
+      "count": 3396,
+      "max": [
+        0.9993126392364502,
+        0.9999315142631531,
+        0.9573684930801392
+      ],
+      "min": [
+        -0.999312698841095,
+        -0.9976955652236938,
+        -0.9999993443489075
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 8576,
+      "componentType": 5126,
+      "count": 3396,
+      "max": [
+        0.9996753334999084,
+        0.9989045858383179,
+        0.9999307990074158,
+        1.0
+      ],
+      "min": [
+        -0.9995703101158142,
+        -0.9999716877937317,
+        -0.9994789958000183,
+        -1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 4288,
+      "componentType": 5126,
+      "count": 3396,
+      "max": [
+        0.9913738965988159,
+        0.9938419461250305
+      ],
+      "min": [
+        0.0049124956130981445,
+        0.009670913219451904
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 3216,
+      "componentType": 5125,
+      "count": 4992,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Dani Ortega (https://sketchfab.com/I_starboy_I)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/low-poly-bird-651a09f1866447688ab88b06090b054d",
+      "title": "Low Poly Bird"
+    },
+    "generator": "Sketchfab-12.65.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 23184,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 31456,
+      "byteOffset": 23184,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 94368,
+      "byteOffset": 54640,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 62912,
+      "byteOffset": 149008,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 211920,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/lambert2_baseColor.png"
+    },
+    {
+      "uri": "textures/lambert2_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/lambert2_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "lambert2",
+      "normalTexture": {
+        "index": 2
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Cola_High_lambert2_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 4,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Body_High_lambert2_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 6,
+            "POSITION": 5,
+            "TANGENT": 7,
+            "TEXCOORD_0": 8
+          },
+          "indices": 9,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        0.01133046392351389,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.5158683855139617e-18,
+        -0.01133046392351389,
+        0.0,
+        0.0,
+        0.01133046392351389,
+        2.5158683855139617e-18,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sparrow_Low.fbx"
+    },
+    {
+      "children": [
+        3,
+        5
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9931214682890067,
+        -0.11708863831938328,
+        0.0,
+        0.0,
+        0.11708863831938328,
+        0.9931214682890067,
+        0.0,
+        0.0,
+        0.8891955614089966,
+        0.4712071716785431,
+        1.0
+      ],
+      "name": "Cola_High"
+    },
+    {
+      "mesh": 0,
+      "name": "Cola_High_lambert2_0"
+    },
+    {
+      "children": [
+        6
+      ],
+      "name": "Body_High"
+    },
+    {
+      "mesh": 1,
+      "name": "Body_High_lambert2_0"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ]
+}
