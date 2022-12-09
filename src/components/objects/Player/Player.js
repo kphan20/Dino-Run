@@ -16,6 +16,9 @@ class Player extends Mesh {
         this.add(camera);
         this.geometry.computeBoundingBox();
 
+        // Disable automatic frustum culling
+        this.frustumCulled = false; 
+
         // Add self to parent's update list
         parent.addToUpdateList(this);
         this.originalBoundingBox = this.geometry.boundingBox;

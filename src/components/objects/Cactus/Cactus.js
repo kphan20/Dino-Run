@@ -14,7 +14,8 @@ import MODEL2 from './cactus.gltf';
 // Basic structure and organization derived from starter code for Flower.js
 class Cactus extends Group {
     constructor(parent) {
-        super();
+        super(); 
+        this.frustumCulled = false;
 
         // Set object state
         this.state = {
@@ -68,7 +69,6 @@ class Cactus extends Group {
     }
 
     garbageCollect() {
-        this.visible = false;
     }
 
     placeBottomAt(pos) {
