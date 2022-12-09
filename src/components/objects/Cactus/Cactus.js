@@ -85,7 +85,7 @@ class Cactus extends Group {
     }
 
     checkCollision(playerBox) {
-        console.log(this.boundingBox, playerBox);
+        if (!this.visible) return false;
         this.updateBoundingBox();
         return playerBox.intersectsBox(this.boundingBox);
     }

@@ -71,6 +71,7 @@ class Bird extends Group {
     }
 
     checkCollision(playerBox) {
+        if (!this.visible) return false;
         this.updateBoundingBox();
         return playerBox.intersectsBox(this.boundingBox);
     }
