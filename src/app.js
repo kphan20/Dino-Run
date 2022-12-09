@@ -111,16 +111,15 @@ const inFrustum = (obj) => {
     const projectionMatrix = camera.projectionMatrix; 
     const matrix = projectionMatrix;
     let boundingBox = null;
-    if (obj == undefined || obj.geometry == undefined || obj.geometry.boundingBox == null) {
-        return true;
+    if (obj === undefined) return true; 
+    else if (obj.name === 'bird' || obj.name === 'cacti') {
+        obj.updateBoundingBox();
+        boundingBox = obj.boundingBox; 
     }
-    if (obj.geometry != undefined) {
-        obj.geometry.computeBoundingBox();
+    else if (obj.geometry != undefined) {
         boundingBox = obj.geometry.boundingBox; 
-    } else {
-        obj.children[0].geometry.computeBoundingBox();
-        boundingBox = obj.children[0].geometry.boundingBox;
-    }
+    } 
+    if (boundingBox === null) return true;
 
     // 8 vertices
     const min = boundingBox.min; 
