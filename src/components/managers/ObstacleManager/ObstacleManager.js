@@ -2,13 +2,13 @@ import { Vector3 } from 'three';
 import { Bird, Cactus } from 'objects';
 
 class ObstacleManager {
-    constructor(obstacleParent) {
+    constructor() {
         this.obstacles = []; // array to hold obstacles
         this.inactiveObstacleSet = new Set(); // set to hold inactive obstacles
 
         // generate 2 obstacles for now
-        this.obstacles.push(new Cactus(obstacleParent));
-        this.obstacles.push(new Bird(obstacleParent));
+        this.obstacles.push(new Cactus());
+        this.obstacles.push(new Bird());
 
         // add all obstacles initially to inactive obstacle set
         for (let i = 0; i < this.obstacles.length; i++) {

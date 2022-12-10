@@ -3,10 +3,10 @@ import { Scene, Color } from 'three';
 import { ObstacleManager } from 'managers';
 import { Flower, Land, Floor } from 'objects';
 import { BasicLights } from 'lights';
-import { Player } from '../objects/Player';
+//import { Player } from '../objects/Player';
 
 class SeedScene extends Scene {
-    constructor(camera, playerBody) {
+    constructor() {
         // Call parent Scene() constructor
         super();
 
@@ -21,11 +21,9 @@ class SeedScene extends Scene {
         this.background = new Color(0x7ec0ee);
 
         // Add meshes to scene
-        const land = new Land();
-        const flower = new Flower(this);
         const lights = new BasicLights();
-        this.player = new Player(this, camera, playerBody);
-        this.add(land, flower, lights, this.player);
+        //this.player = new Player(this, camera, playerBody, mixer);
+        this.add(lights);
 
         // Add obstacles to scene
         this.obstacleManager = new ObstacleManager(this);

@@ -1,5 +1,5 @@
 class Hud {
-    constructor(pauseFunc = null) {
+    constructor() {
         const score = document.createElement('p');
         score.setAttribute('id', 'score');
         document.body.appendChild(score);
@@ -18,7 +18,6 @@ class Hud {
         pauseButton.style.right = '20px';
         pauseButton.style.top = '20px';
         const onClick = () => {
-            pauseFunc();
             pausedText.style.visibility = this.isPaused ? 'hidden' : 'visible';
             this.isPaused = !this.isPaused;
         };

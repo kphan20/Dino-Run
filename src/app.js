@@ -1,7 +1,7 @@
 /**
  * app.js
  *
- * This is the first file loaded. It sets up the Renderer,
+ * playerGroup is the first file loaded. It sets up the Renderer,
  * Scene and Camera. It also starts the render loop and
  * handles window resizes.
  *
@@ -12,16 +12,22 @@ import {
     Vector3,
     Vector4,
     RGB_S3TC_DXT1_Format,
+    Clock,
+    AnimationMixer,
 } from 'three';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
+import { drawWireFrameBox } from './helpers';
 import { Hud } from './components/hud';
+import { Player } from './components/objects/Player';
 import deathSound from './resources/death.mp3';
 import jumpSound from './resources/boing.mp3';
+import runningModel from './components/objects/Player/running.fbx';
 
 // Handle Physics
 // Set up physics
@@ -48,7 +54,32 @@ physicsWorld.addBody(playerBody);
 
 // Initialize core ThreeJS components
 const camera = new PerspectiveCamera();
-const scene = new SeedScene(camera, playerBody);
+let mixer = null;
+let animations = [];
+const clock = new Clock();
+const scene = new SeedScene();
+const playerGroup = new Player(scene, camera, playerBody);
+scene.player = playerGroup;
+scene.add(playerGroup);
+const loadPlayerMesh = () => {
+    return new Promise((resolve, reject) => {
+        const fbxLoader = new FBXLoader();
+        fbxLoader.load(runningModel, (object) => {
+            object.scale.set(0.01, 0.01, 0.01);
+            playerGroup.add(object);
+            console.log(object);
+            mixer = new AnimationMixer(object);
+            object.animations.forEach((animation) => {
+                animation = mixer.clipAction(animation);
+                animations.push(animation);
+                animation.play();
+            });
+            playerGroup.originalBoundingBox.setFromObject(object);
+            drawWireFrameBox(playerGroup);
+            resolve(true);
+        });
+    });
+};
 const renderer = new WebGLRenderer({
     antialias: true,
     powerPreference: 'high-performance',
@@ -70,30 +101,23 @@ document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
-// Set up controls
-// const controls = new OrbitControls(camera, canvas);
-// controls.enableDamping = true;
-// controls.enablePan = false;
-// controls.minDistance = 4;
-// controls.maxDistance = 16;
-// controls.update();
-
 // placeholder for handling game ending
 let gameOver = false;
 const handleGameOver = () => {
     gameOver = true;
     const audio = new Audio(deathSound);
     audio.play();
+    animations[0].stop();
 };
 
 // current implementation uses bounding boxes to detect collisions
-// potentially more fancy methods we can use, but this should do for now
+// potentially more fancy methods we can use, but playerGroup should do for now
 const handleCollisions = () => {
     const playerObject = scene.player;
-    const playerBox = playerObject.geometry.boundingBox;
+    const playerBox = playerObject.boundingBox;
     const obstacles = scene.obstacleManager.obstacles;
     for (let i = 0; i < obstacles.length; i++) {
-        // we should only compute and adjust this bounding box once
+        // we should only compute and adjust playerGroup bounding box once
         if (obstacles[i].checkCollision(playerBox)) {
             handleGameOver();
             break;
@@ -105,24 +129,23 @@ const handleCollisions = () => {
 const handleFrustumCulling = () => {
     scene.traverse((obj) => {
         obj.visible = inFrustum(obj);
-    })
-}
-const inFrustum = (obj) => {    
-    const projectionMatrix = camera.projectionMatrix; 
+    });
+};
+const inFrustum = (obj) => {
+    const projectionMatrix = camera.projectionMatrix;
     const matrix = projectionMatrix;
     let boundingBox = null;
-    if (obj === undefined) return true; 
+    if (obj === undefined) return true;
     else if (obj.name === 'bird' || obj.name === 'cacti') {
         obj.updateBoundingBox();
-        boundingBox = obj.boundingBox; 
+        boundingBox = obj.boundingBox;
+    } else if (obj.geometry != undefined) {
+        boundingBox = obj.geometry.boundingBox;
     }
-    else if (obj.geometry != undefined) {
-        boundingBox = obj.geometry.boundingBox; 
-    } 
     if (boundingBox === null) return true;
 
     // 8 vertices
-    const min = boundingBox.min; 
+    const min = boundingBox.min;
     const max = boundingBox.max;
 
     const v1 = new Vector3(min.x, min.y, min.z);
@@ -133,9 +156,7 @@ const inFrustum = (obj) => {
     const v6 = new Vector3(max.x, min.y, max.z);
     const v7 = new Vector3(max.x, max.y, min.z);
     const v8 = new Vector3(max.x, max.y, max.z);
-    const verts = [
-        v1, v2, v3, v4, v5, v6, v7, v8,
-    ];
+    const verts = [v1, v2, v3, v4, v5, v6, v7, v8];
 
     for (let i = 0; i < verts.length; i++) {
         const v = verts[i];
@@ -144,23 +165,17 @@ const inFrustum = (obj) => {
         const cameraV4 = worldV4.applyMatrix4(camera.matrixWorldInverse);
 
         const projV4 = cameraV4.applyMatrix4(matrix);
-        const x = projV4.x; 
-        const y = projV4.y; 
-        const z = projV4.z; 
-        const w = projV4.w; 
+        const x = projV4.x;
+        const y = projV4.y;
+        const z = projV4.z;
+        const w = projV4.w;
 
-        if (
-            x >= -w && 
-            x <= w &&
-            y >= -w &&
-            y <= w &&
-            z >= 0 &&
-            z <= w
-        ) return true; 
+        if (x >= -w && x <= w && y >= -w && y <= w && z >= 0 && z <= w)
+            return true;
     }
 
     return false;
-}
+};
 
 // cannon debugger
 // const cannonDebugger = new CannonDebugger(scene, physicsWorld);
@@ -174,7 +189,7 @@ const animate = () => {
     }
     window.requestAnimationFrame(animate);
 };
-animate();
+// animate();
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
@@ -182,18 +197,27 @@ const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
 
+    //scene.obstacleManager.handleObstacles(scene.player.position.z);
     if (!gameOver && !hud.isPaused) {
+        scene.obstacleManager.handleObstacles(scene.player.position.z);
         scene.player.movePlayer(0, 0, 0.1);
+        if (mixer) mixer.update(clock.getDelta());
         handleCollisions();
         hud.updateScore(scene.player.position);
-        scene.obstacleManager.handleObstacles(scene.player.position.z);
     }
     window.requestAnimationFrame(onAnimationFrameHandler);
-
-    scene.obstacleManager.handleObstacles(scene.player.position.z);
     handleFrustumCulling();
 };
-window.requestAnimationFrame(onAnimationFrameHandler);
+// window.requestAnimationFrame(onAnimationFrameHandler);
+
+Promise.all([
+    loadPlayerMesh(),
+    ...scene.obstacleManager.obstacles.map((obstacle) => obstacle.loadMesh()),
+]).then(() => {
+    scene.obstacleManager.handleObstacles(scene.player.position.z);
+    animate();
+    window.requestAnimationFrame(onAnimationFrameHandler);
+});
 
 // Resize Handler
 const windowResizeHandler = () => {
