@@ -1,4 +1,11 @@
 import { Pebble } from 'objects';
+import {
+    MeshBasicMaterial,
+    DodecahedronGeometry,
+    IcosahedronGeometry,
+    OctahedronGeometry, 
+    TextureLoader,
+} from 'three';
 
 class PebbleManager {
     constructor(numPebbles=10) {
@@ -6,33 +13,47 @@ class PebbleManager {
         this.numPebbles = numPebbles;
         this.inactivePebbleSet = new Set(); // set to hold inactive pebbles
 
-        const pebble = new Pebble(); 
+        // create shared texture
+        const loader = new TextureLoader();
+        const texture = loader.load('src/components/objects/Pebble/pebble_files1/textures/PolySphere_baseColor.png');
+        const pebbleMat = new MeshBasicMaterial({
+            map: texture
+        });   
         
+        // create shared geometries
+        const octoGeo = new OctahedronGeometry(1);
+        const dodecGeo = new DodecahedronGeometry(0.5);
+        const icosaGeo = new IcosahedronGeometry(0.75);
+        const geos = [octoGeo, dodecGeo, icosaGeo];
+
         // Grid that defines the pebble grid being defined
         this.minX = -30; 
         this.maxX = 30; 
-        this.minY = 0; 
-        this.maxY = 0; 
+        this.minY = -2; 
+        this.maxY = -2; 
         this.gridZDelta = 150; 
         this.minZ = 0; 
         this.maxZ = this.gridZDelta; 
 
-        this.generationProbability = 0.01; 
-
-        for (let i = 0; i < this.numPebbles; i++) {
-            const newPebble = pebble.clone(); 
-            const x = this.generateIntBetween(this.minX, this.maxX);
-            const y = 0; 
-            const z = this.generateIntBetween(
-                this.minZ,
-                this.maxZ
-            );            
-            newPebble.position.x = x; 
-            newPebble.position.y = y; 
-            newPebble.position.z = z; 
-            this.pebbles.push(newPebble);
-        }      
-    }
+        // make num pebbles
+        const numPebblesOfEach = Math.floor(numPebbles);
+        for (let i = 0; i < numPebblesOfEach; i++) {
+            for (let j = 0; j < geos.length; j++) {
+                const geo = geos[j];
+                const newPebble = new Pebble(geo, pebbleMat);
+                const x = this.generateIntBetween(this.minX, this.maxX);
+                const y = this.minY; 
+                const z = this.generateIntBetween(
+                    this.minZ,
+                    this.maxZ
+                );           
+                newPebble.position.x = x; 
+                newPebble.position.y = y; 
+                newPebble.position.z = z; 
+                this.pebbles.push(newPebble);                         
+            }
+        }   
+            }
 
     // update pebbles
     handlePebbles(frontierDepth) {
@@ -58,7 +79,7 @@ class PebbleManager {
                 if (pebble.position.z < frontierDepth) {
                     // this.inactivePebbleSet.add(pebble);
                     const x = this.generateIntBetween(this.minX, this.maxX);
-                    const y = 0; 
+                    const y = this.minY; 
                     const z = frontierDepth + 200;   
                     pebble.position.x = x; 
                     pebble.position.y = y; 
