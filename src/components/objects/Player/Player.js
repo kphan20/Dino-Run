@@ -5,15 +5,14 @@ class Player extends Mesh {
         // Call parent Group() constructor
         super();
         this.add(camera);
-        // this.geometry.computeBoundingBox();
-        this.visible = false;
+        this.visible = true;
 
         // Disable automatic frustum culling
         this.frustumCulled = false;
 
         // Add self to parent's update list
         parent.addToUpdateList(this);
-        this.originalBoundingBox = new Box3(); //this.geometry.boundingBox;
+        this.originalBoundingBox = new Box3();
         this.boundingBox = this.originalBoundingBox.clone();
 
         // How much to rotate by for each key press
