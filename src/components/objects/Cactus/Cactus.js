@@ -1,7 +1,9 @@
-import { Box3, Group } from 'three';
+import { Box3, Group, MeshPhongMaterial } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import MODEL2 from './cactus.gltf';
 import { drawWireFrameBox } from '../../../helpers';
+import CACTUS_TEXTURE from './cactus/normal.tga';
 
 // Basic structure and organization derived from starter code for Flower.js
 class Cactus extends Group {
@@ -44,19 +46,30 @@ class Cactus extends Group {
 
     loadMesh() {
         return new Promise((resolve, reject) => {
-            const loader = new GLTFLoader();
-            loader.load(MODEL2, (gltf) => {
-                gltf.scene.scale.set(0.5, 0.5, 0.5);
-                this.add(gltf.scene);
-                this.originalBoundingBox.setFromObject(gltf.scene);
-                gltf.scene.position.y =
-                    -(
-                        this.originalBoundingBox.max.y -
-                        this.originalBoundingBox.min.y
-                    ) / 2;
-                this.originalBoundingBox.setFromObject(gltf.scene);
-                drawWireFrameBox(this);
-                resolve(true);
+            const tgaLoader = new TGALoader();
+            tgaLoader.resourcePath = 'src/components/objects/Cactus/cactus/';
+            tgaLoader.load(CACTUS_TEXTURE, (texture) => {
+                const material = new MeshPhongMaterial({
+                    color: 0x2b3a24,
+                    map: texture,
+                });
+                const loader = new GLTFLoader();
+                loader.load(MODEL2, (gltf) => {
+                    gltf.scene.scale.set(0.5, 0.5, 0.5);
+                    this.add(gltf.scene);
+                    gltf.scene.traverse((child) => {
+                        if (child.isMesh) child.material = material;
+                    });
+                    this.originalBoundingBox.setFromObject(gltf.scene);
+                    gltf.scene.position.y =
+                        -(
+                            this.originalBoundingBox.max.y -
+                            this.originalBoundingBox.min.y
+                        ) / 2;
+                    this.originalBoundingBox.setFromObject(gltf.scene);
+                    drawWireFrameBox(this);
+                    resolve(true);
+                });
             });
         });
     }
