@@ -50,6 +50,8 @@ class Player extends Mesh {
         this.position.copy(this.playerBody.position);
         return onGround;
     }
+
+    update(timeStamp) { }
 }
 
 export default Player;
