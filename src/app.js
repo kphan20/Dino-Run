@@ -1,7 +1,7 @@
 /**
  * app.js
  *
- * This is the first file loaded. It sets up the Renderer,
+ * playerGroup is the first file loaded. It sets up the Renderer,
  * Scene and Camera. It also starts the render loop and
  * handles window resizes.
  *
@@ -10,18 +10,23 @@ import {
     WebGLRenderer,
     PerspectiveCamera,
     Vector3,
-    Vector4,
-    RGB_S3TC_DXT1_Format,
+    Clock,
+    AnimationMixer,
 } from 'three';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
+import { drawWireFrameBox } from './helpers';
+import { handleFrustumCulling } from './frustum';
 import { Hud } from './components/hud';
+import { Player } from './components/objects/Player';
 import deathSound from './resources/death.mp3';
 import jumpSound from './resources/boing.mp3';
+import runningModel from './components/objects/Player/running.fbx';
 
 // Handle Physics
 // Set up physics
@@ -46,19 +51,77 @@ const playerBody = new CANNON.Body({
 playerBody.position.set(0, 10, 0);
 physicsWorld.addBody(playerBody);
 
+const startGame = () => {
+    playerMesh.visible = true;
+    currCam = camera;
+};
+
 // Initialize core ThreeJS components
+const startingCamera = new PerspectiveCamera();
+let currCam = startingCamera;
 const camera = new PerspectiveCamera();
-const scene = new SeedScene(camera, playerBody);
+let mixer = null;
+let animations = [];
+const clock = new Clock();
+const scene = new SeedScene();
+const playerMesh = new Player(camera, playerBody);
+scene.player = playerMesh;
+scene.add(playerMesh);
+const loadPlayerMesh = () => {
+    return new Promise((resolve, reject) => {
+        const fbxLoader = new FBXLoader();
+        fbxLoader.load(runningModel, (object) => {
+            object.scale.set(0.01, 0.01, 0.01);
+            playerMesh.add(object);
+            console.log(object);
+            mixer = new AnimationMixer(object);
+            object.animations.forEach((animation) => {
+                animation = mixer.clipAction(animation);
+                animations.push(animation);
+                animation.play();
+            });
+            playerMesh.originalBoundingBox.setFromObject(object);
+            const oldMin = playerMesh.originalBoundingBox.min;
+            const oldMax = playerMesh.originalBoundingBox.max;
+            playerMesh.originalBoundingBox.min.set(
+                oldMin.x + 0.5,
+                oldMin.y,
+                oldMin.z
+            );
+            playerMesh.originalBoundingBox.max.set(
+                oldMax.x - 0.5,
+                oldMax.y,
+                oldMax.z
+            );
+            drawWireFrameBox(playerMesh);
+            mixer.update(clock.getDelta());
+            resolve(true);
+        });
+    });
+};
 const renderer = new WebGLRenderer({
     antialias: true,
     powerPreference: 'high-performance',
 });
-const hud = new Hud();
+
+const init = () => {
+    playerBody.position.set(0, 0, 0);
+    playerMesh.position.set(0, 0, 0);
+    playerMesh.visible = false;
+    scene.obstacleManager.resetObstacles();
+    currCam = startingCamera;
+    animations[0].play();
+    mixer.update(clock.getDelta());
+};
+
+const hud = new Hud(startGame, init);
 
 // Set up camera
 const FRONT_VIEW = new Vector3(0, 3, -2);
 const BACK_VIEW = new Vector3(0, 3, -10);
 
+currCam.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
+currCam.lookAt(new Vector3(0, 0, 0));
 camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
 camera.lookAt(new Vector3(0, 0, 0));
 
@@ -70,30 +133,21 @@ document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
-// Set up controls
-// const controls = new OrbitControls(camera, canvas);
-// controls.enableDamping = true;
-// controls.enablePan = false;
-// controls.minDistance = 4;
-// controls.maxDistance = 16;
-// controls.update();
-
-// placeholder for handling game ending
-let gameOver = false;
 const handleGameOver = () => {
-    gameOver = true;
+    hud.showGameOver();
     const audio = new Audio(deathSound);
     audio.play();
+    animations[0].stop();
 };
 
 // current implementation uses bounding boxes to detect collisions
-// potentially more fancy methods we can use, but this should do for now
+// potentially more fancy methods we can use, but playerGroup should do for now
 const handleCollisions = () => {
     const playerObject = scene.player;
-    const playerBox = playerObject.geometry.boundingBox;
+    const playerBox = playerObject.boundingBox;
     const obstacles = scene.obstacleManager.obstacles;
     for (let i = 0; i < obstacles.length; i++) {
-        // we should only compute and adjust this bounding box once
+        // we should only compute and adjust playerGroup bounding box once
         if (obstacles[i].checkCollision(playerBox)) {
             handleGameOver();
             break;
@@ -101,99 +155,45 @@ const handleCollisions = () => {
     }
 };
 
-// Frustum culling
-const handleFrustumCulling = () => {
-    scene.traverse((obj) => {
-        obj.visible = inFrustum(obj);
-    })
-}
-const inFrustum = (obj) => {    
-    const projectionMatrix = camera.projectionMatrix; 
-    const matrix = projectionMatrix;
-    let boundingBox = null;
-    if (obj === undefined) return true; 
-    else if (obj.name === 'bird' || obj.name === 'cacti') {
-        obj.updateBoundingBox();
-        boundingBox = obj.boundingBox; 
-    }
-    else if (obj.geometry != undefined) {
-        boundingBox = obj.geometry.boundingBox; 
-    } 
-    if (boundingBox === null) return true;
-
-    // 8 vertices
-    const min = boundingBox.min; 
-    const max = boundingBox.max;
-
-    const v1 = new Vector3(min.x, min.y, min.z);
-    const v2 = new Vector3(min.x, min.y, max.z);
-    const v3 = new Vector3(min.x, max.y, min.z);
-    const v4 = new Vector3(min.x, max.y, max.z);
-    const v5 = new Vector3(max.x, min.y, min.z);
-    const v6 = new Vector3(max.x, min.y, max.z);
-    const v7 = new Vector3(max.x, max.y, min.z);
-    const v8 = new Vector3(max.x, max.y, max.z);
-    const verts = [
-        v1, v2, v3, v4, v5, v6, v7, v8,
-    ];
-
-    for (let i = 0; i < verts.length; i++) {
-        const v = verts[i];
-        const worldV = obj.localToWorld(v);
-        const worldV4 = new Vector4(worldV.x, worldV.y, worldV.z, 1);
-        const cameraV4 = worldV4.applyMatrix4(camera.matrixWorldInverse);
-
-        const projV4 = cameraV4.applyMatrix4(matrix);
-        const x = projV4.x; 
-        const y = projV4.y; 
-        const z = projV4.z; 
-        const w = projV4.w; 
-
-        if (
-            x >= -w && 
-            x <= w &&
-            y >= -w &&
-            y <= w &&
-            z >= 0 &&
-            z <= w
-        ) return true; 
-    }
-
-    return false;
-}
-
 // cannon debugger
 // const cannonDebugger = new CannonDebugger(scene, physicsWorld);
 
 // run physics simulation
 const animate = () => {
-    if (!gameOver && !hud.isPaused) {
+    if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
         physicsWorld.fixedStep();
         // cannonDebugger.update();
         scene.player.position.copy(playerBody.position);
     }
     window.requestAnimationFrame(animate);
 };
-animate();
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    // controls.update();
-    renderer.render(scene, camera);
+    renderer.render(scene, currCam);
     scene.update && scene.update(timeStamp);
 
-    if (!gameOver && !hud.isPaused) {
+    if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
         scene.player.movePlayer(0, 0, 0.1);
+        if (mixer) mixer.update(clock.getDelta());
         handleCollisions();
         hud.updateScore(scene.player.position);
         scene.obstacleManager.handleObstacles(scene.player.position.z);
+        handleFrustumCulling(scene, camera);
+    } else if (!hud.gameStarted) {
+        startingCamera.position.z += 0.1;
     }
     window.requestAnimationFrame(onAnimationFrameHandler);
-
-    scene.obstacleManager.handleObstacles(scene.player.position.z);
-    handleFrustumCulling();
 };
-window.requestAnimationFrame(onAnimationFrameHandler);
+
+Promise.all([
+    loadPlayerMesh(),
+    ...scene.obstacleManager.obstacles.map((obstacle) => obstacle.loadMesh()),
+]).then(() => {
+    renderer.compile(scene, camera);
+    animate();
+    window.requestAnimationFrame(onAnimationFrameHandler);
+});
 
 // Resize Handler
 const windowResizeHandler = () => {
@@ -201,13 +201,15 @@ const windowResizeHandler = () => {
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
+    startingCamera.aspect = innerWidth / innerHeight;
+    startingCamera.updateProjectionMatrix();
 };
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
     const key = e.key;
-    if (gameOver || hud.isPaused) return;
+    if (hud.gameOver || hud.isPaused) return;
 
     if (key === 'ArrowLeft') {
         scene.player.rotatePlayerLeft();

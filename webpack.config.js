@@ -42,6 +42,11 @@ module.exports = {
                     },
                 ],
             },
+            {
+                test: /\.fbx/,
+                use: 'file-loader',
+                exclude: path.resolve(__dirname, './node_modules/'),
+            },
         ],
     },
     resolve: {

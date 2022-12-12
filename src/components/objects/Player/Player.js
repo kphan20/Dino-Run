@@ -1,51 +1,17 @@
-import {
-    Mesh,
-    CylinderGeometry,
-    MeshPhongMaterial,
-    Vector3,
-    BoxBufferGeometry,
-    Matrix4,
-    WireframeGeometry,
-    LineSegments,
-} from 'three';
+import { Mesh, Box3 } from 'three';
 
 class Player extends Mesh {
-    constructor(parent, camera, playerBody) {
+    constructor(camera, playerBody) {
         // Call parent Group() constructor
-        super(new CylinderGeometry(), new MeshPhongMaterial());
+        super();
         this.add(camera);
-        this.geometry.computeBoundingBox();
+        this.visible = false;
 
         // Disable automatic frustum culling
-        this.frustumCulled = false; 
+        this.frustumCulled = false;
 
-        // Add self to parent's update list
-        parent.addToUpdateList(this);
-        this.originalBoundingBox = this.geometry.boundingBox;
-        const dimensions = new Vector3().subVectors(
-            this.originalBoundingBox.max,
-            this.originalBoundingBox.min
-        );
-        const boxGeo = new BoxBufferGeometry(
-            dimensions.x,
-            dimensions.y,
-            dimensions.z
-        );
-        const matrix = new Matrix4().setPosition(
-            dimensions
-                .addVectors(
-                    this.originalBoundingBox.min,
-                    this.originalBoundingBox.max
-                )
-                .multiplyScalar(0.5)
-        );
-        boxGeo.applyMatrix4(matrix);
-        this.wireframe = new WireframeGeometry(boxGeo);
-        const line = new LineSegments(this.wireframe);
-        line.material.depthTest = false;
-        line.material.opacity = 0.25;
-        line.material.transparent = true;
-        this.add(line);
+        this.originalBoundingBox = new Box3();
+        this.boundingBox = this.originalBoundingBox.clone();
 
         // How much to rotate by for each key press
         this.rotationDelta = Math.PI / 16;
@@ -66,8 +32,8 @@ class Player extends Mesh {
         this.translateX(dx);
         this.translateY(dy);
         this.translateZ(dz);
-        this.geometry.computeBoundingBox();
-        this.geometry.boundingBox.translate(this.position);
+        this.boundingBox = this.originalBoundingBox.clone();
+        this.boundingBox.translate(this.position);
         this.playerBody.position.set(
             this.position.x,
             this.position.y,
@@ -84,8 +50,6 @@ class Player extends Mesh {
         this.position.copy(this.playerBody.position);
         return onGround;
     }
-
-    update(timeStamp) {}
 }
 
 export default Player;
