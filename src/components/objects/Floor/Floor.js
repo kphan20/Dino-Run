@@ -6,6 +6,7 @@ import {
     MirroredRepeatWrapping,
     TextureLoader,
     MeshBasicMaterial,
+    ShaderMaterial
 } from 'three';
 import { Vector3 } from 'three/src/Three';
 require('./sand.jpeg');
@@ -96,27 +97,42 @@ class Floor extends Group {
         texture.wrapS = MirroredRepeatWrapping;
         texture.wrapT = MirroredRepeatWrapping;
         texture.rotation = MathUtils.degToRad(57);
-        texture.repeat.set(100, 100);
-        const objMat = new MeshBasicMaterial({
+        const textureObjMat = new MeshBasicMaterial({
             color: 0xffffdf,
             // wireframe: true,
             // map: texture,
             // precision: 'lowp',
         });
+        texture.repeat.set(500, 500);
+        this.texture = texture; 
+        const textureMesh = new Mesh(objGeo, textureObjMat);
+        textureMesh.rotateX(Math.PI / -2);
 
-        const objMesh = new Mesh(objGeo, objMat);
-
-        // rotate mesh to align horizontally
-        objMesh.rotateX(Math.PI / -2);
+        // create grid shader mesh
+        const gridObjMesh = new ShaderMaterial({
+            vertexShader: vertexShader(), 
+            fragmentShader: fragmentShader(),
+        })
+        const shaderMesh = new Mesh(objGeo, gridObjMesh);
+        shaderMesh.rotateX(Math.PI / -2);
+        shaderMesh.name = 'floor';
+        textureMesh.name = 'floor';
+        this.name = 'floor';
 
         // set object position
         //this.position.y = -2;
 
         // Disable auto frustum culling
-        objMesh.frustumCulled = false;
+        textureMesh.frustumCulled = false; 
+        shaderMesh.frustumCulled = false; 
 
         // add mesh
-        this.add(objMesh);
+        this.add(textureMesh);
+        this.add(shaderMesh);
+        this.textureMesh = textureMesh; 
+        this.shaderMesh = shaderMesh; 
+        textureMesh.visible = false;
+        shaderMesh.visible = true;
 
         // // add mesh
         // this.add(objMesh);
@@ -144,7 +160,12 @@ class Floor extends Group {
         //   const objMesh = new Mesh(objGeo, objMat);
         //   objMesh.frustumCulled = false;
         // }
-    }
+  }
+
+  toggleFloor() {
+    this.textureMesh.visible = !this.textureMesh.visible; 
+    this.shaderMesh.visible = !this.shaderMesh.visible;
+  }
 }
 
 export default Floor;

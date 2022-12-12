@@ -66,6 +66,7 @@ class Bird extends Group {
             );
             loader.load(MODEL, (gltf) => {
                 gltf.scene.scale.setScalar(5);
+                gltf.scene.rotateY(Math.PI);
 
                 this.add(gltf.scene);
                 this.originalBoundingBox.setFromObject(gltf.scene);

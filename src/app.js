@@ -213,7 +213,7 @@ const onAnimationFrameHandler = (timeStamp) => {
             runningSound.play();
         frameCounter++;
         if (frameCounter % 300 === 0) speed += 0.5;
-        scene.player.movePlayer(0, 0, speed);
+        scene.player.movePlayer(0, 0, 0.1);
 
         if (scene.player.position.x > 4) {
             playerBody.position.x = 4;
@@ -296,5 +296,7 @@ window.addEventListener('keydown', (e) => {
         if (camera.position.z == BACK_VIEW.z)
             camera.position.set(FRONT_VIEW.x, FRONT_VIEW.y, FRONT_VIEW.z);
         else camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
+    } else if (key === 's') {
+        scene.floor.toggleFloor()
     }
 });

@@ -29,6 +29,10 @@ class SeedScene extends Scene {
         const right_wall = new Right_Wall();
         this.floor = floor;
         this.add(floor, left_wall, right_wall);
+        this.floor = floor;
+
+        // Populate GUI
+        // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
     }
 
     addToUpdateList(object) {
