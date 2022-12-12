@@ -51,21 +51,28 @@ const playerBody = new CANNON.Body({
 playerBody.position.set(0, 10, 0);
 physicsWorld.addBody(playerBody);
 
+const startGame = () => {
+    playerMesh.visible = true;
+    currCam = camera;
+};
+
 // Initialize core ThreeJS components
+const startingCamera = new PerspectiveCamera();
+let currCam = startingCamera;
 const camera = new PerspectiveCamera();
 let mixer = null;
 let animations = [];
 const clock = new Clock();
 const scene = new SeedScene();
-const playerGroup = new Player(scene, camera, playerBody);
-scene.player = playerGroup;
-scene.add(playerGroup);
+const playerMesh = new Player(camera, playerBody);
+scene.player = playerMesh;
+scene.add(playerMesh);
 const loadPlayerMesh = () => {
     return new Promise((resolve, reject) => {
         const fbxLoader = new FBXLoader();
         fbxLoader.load(runningModel, (object) => {
             object.scale.set(0.01, 0.01, 0.01);
-            playerGroup.add(object);
+            playerMesh.add(object);
             console.log(object);
             mixer = new AnimationMixer(object);
             object.animations.forEach((animation) => {
@@ -73,20 +80,21 @@ const loadPlayerMesh = () => {
                 animations.push(animation);
                 animation.play();
             });
-            playerGroup.originalBoundingBox.setFromObject(object);
-            const oldMin = playerGroup.originalBoundingBox.min;
-            const oldMax = playerGroup.originalBoundingBox.max;
-            playerGroup.originalBoundingBox.min.set(
+            playerMesh.originalBoundingBox.setFromObject(object);
+            const oldMin = playerMesh.originalBoundingBox.min;
+            const oldMax = playerMesh.originalBoundingBox.max;
+            playerMesh.originalBoundingBox.min.set(
                 oldMin.x + 0.5,
                 oldMin.y,
                 oldMin.z
             );
-            playerGroup.originalBoundingBox.max.set(
+            playerMesh.originalBoundingBox.max.set(
                 oldMax.x - 0.5,
                 oldMax.y,
                 oldMax.z
             );
-            drawWireFrameBox(playerGroup);
+            drawWireFrameBox(playerMesh);
+            mixer.update(clock.getDelta());
             resolve(true);
         });
     });
@@ -95,12 +103,25 @@ const renderer = new WebGLRenderer({
     antialias: true,
     powerPreference: 'high-performance',
 });
-const hud = new Hud();
+
+const init = () => {
+    playerBody.position.set(0, 0, 0);
+    playerMesh.position.set(0, 0, 0);
+    playerMesh.visible = false;
+    scene.obstacleManager.resetObstacles();
+    currCam = startingCamera;
+    animations[0].play();
+    mixer.update(clock.getDelta());
+};
+
+const hud = new Hud(startGame, init);
 
 // Set up camera
 const FRONT_VIEW = new Vector3(0, 3, -2);
 const BACK_VIEW = new Vector3(0, 3, -10);
 
+currCam.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
+currCam.lookAt(new Vector3(0, 0, 0));
 camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
 camera.lookAt(new Vector3(0, 0, 0));
 
@@ -112,10 +133,8 @@ document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
-// placeholder for handling game ending
-let gameOver = false;
 const handleGameOver = () => {
-    gameOver = true;
+    hud.showGameOver();
     const audio = new Audio(deathSound);
     audio.play();
     animations[0].stop();
@@ -141,7 +160,7 @@ const handleCollisions = () => {
 
 // run physics simulation
 const animate = () => {
-    if (!gameOver && !hud.isPaused) {
+    if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
         physicsWorld.fixedStep();
         // cannonDebugger.update();
         scene.player.position.copy(playerBody.position);
@@ -151,16 +170,18 @@ const animate = () => {
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    renderer.render(scene, camera);
+    renderer.render(scene, currCam);
     scene.update && scene.update(timeStamp);
 
-    if (!gameOver && !hud.isPaused) {
+    if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
         scene.player.movePlayer(0, 0, 0.1);
         if (mixer) mixer.update(clock.getDelta());
         handleCollisions();
         hud.updateScore(scene.player.position);
         scene.obstacleManager.handleObstacles(scene.player.position.z);
         handleFrustumCulling(scene, camera);
+    } else if (!hud.gameStarted) {
+        startingCamera.position.z += 0.1;
     }
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
@@ -180,13 +201,15 @@ const windowResizeHandler = () => {
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
+    startingCamera.aspect = innerWidth / innerHeight;
+    startingCamera.updateProjectionMatrix();
 };
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
     const key = e.key;
-    if (gameOver || hud.isPaused) return;
+    if (hud.gameOver || hud.isPaused) return;
 
     if (key === 'ArrowLeft') {
         scene.player.rotatePlayerLeft();

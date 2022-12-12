@@ -81,6 +81,13 @@ class ObstacleManager {
             }
         }
     }
+
+    resetObstacles() {
+        this.obstacles.forEach((obstacle) => {
+            obstacle.garbageCollect();
+            this.inactiveObstacleSet.add(obstacle);
+        });
+    }
 }
 
 export default ObstacleManager;

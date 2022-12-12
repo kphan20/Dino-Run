@@ -23,7 +23,9 @@ class Cactus extends Group {
         this.visible = false;
     }
 
-    garbageCollect() {}
+    garbageCollect() {
+        this.visible = false;
+    }
 
     placeBottomAt(pos) {
         this.position.x = pos.x;

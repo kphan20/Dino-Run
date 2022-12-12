@@ -1,17 +1,15 @@
 import { Mesh, Box3 } from 'three';
 
 class Player extends Mesh {
-    constructor(parent, camera, playerBody) {
+    constructor(camera, playerBody) {
         // Call parent Group() constructor
         super();
         this.add(camera);
-        this.visible = true;
+        this.visible = false;
 
         // Disable automatic frustum culling
         this.frustumCulled = false;
 
-        // Add self to parent's update list
-        parent.addToUpdateList(this);
         this.originalBoundingBox = new Box3();
         this.boundingBox = this.originalBoundingBox.clone();
 
@@ -52,8 +50,6 @@ class Player extends Mesh {
         this.position.copy(this.playerBody.position);
         return onGround;
     }
-
-    update(timeStamp) {}
 }
 
 export default Player;
