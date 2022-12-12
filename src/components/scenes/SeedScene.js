@@ -1,7 +1,7 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color } from 'three';
 import { ObstacleManager } from 'managers';
-import { Flower, Land, Floor, Left_Wall } from 'objects';
+import { Flower, Land, Floor, Left_Wall, Right_Wall } from 'objects';
 import { BasicLights } from 'lights';
 
 class SeedScene extends Scene {
@@ -30,7 +30,8 @@ class SeedScene extends Scene {
         // Add floor and walls to scene
         const floor = new Floor();
         const left_wall = new Left_Wall();
-        this.add(floor, left_wall);
+        const right_wall = new Right_Wall();
+        this.add(floor, left_wall, right_wall);
 
         // Populate GUI
         // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
