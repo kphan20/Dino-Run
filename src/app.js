@@ -175,7 +175,14 @@ const onAnimationFrameHandler = (timeStamp) => {
 
     if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
         scene.player.movePlayer(0, 0, 0.1);
+
         if (mixer) mixer.update(clock.getDelta());
+        if (scene.player.position.x > 4) {
+            playerBody.position.x = 4;
+        }
+        if (scene.player.position.x < -4) {
+            playerBody.position.x = -4;
+        }
         handleCollisions();
         hud.updateScore(scene.player.position);
         scene.obstacleManager.handleObstacles(scene.player.position.z);
