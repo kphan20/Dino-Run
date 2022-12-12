@@ -186,6 +186,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         handleCollisions();
         hud.updateScore(scene.player.position);
         scene.obstacleManager.handleObstacles(scene.player.position.z);
+        scene.pebbleManager.handlePebbles(scene.player.position.z);
         handleFrustumCulling(scene, camera);
     } else if (!hud.gameStarted) {
         startingCamera.position.z += 0.1;

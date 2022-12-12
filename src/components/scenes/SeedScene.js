@@ -1,6 +1,6 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color } from 'three';
-import { ObstacleManager } from 'managers';
+import { ObstacleManager, PebbleManager } from 'managers';
 import { Flower, Land, Floor, Left_Wall, Right_Wall } from 'objects';
 import { BasicLights } from 'lights';
 
@@ -26,6 +26,10 @@ class SeedScene extends Scene {
         // Add obstacles to scene
         this.obstacleManager = new ObstacleManager(this);
         this.add(...this.obstacleManager.obstacles);
+
+        // Add pebbles to scene
+        this.pebbleManager = new PebbleManager();
+        this.add(...this.pebbleManager.pebbles);
 
         // Add floor and walls to scene
         const floor = new Floor();
