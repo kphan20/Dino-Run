@@ -1,4 +1,4 @@
-import { Mesh, Box3 } from 'three';
+import { Mesh, Box3, Vector3 } from 'three';
 
 class Player extends Mesh {
     constructor(camera, playerBody) {
@@ -21,11 +21,27 @@ class Player extends Mesh {
     }
 
     rotatePlayerLeft() {
-        this.rotation.y += this.rotationDelta;
+        if (this.canRotate(true)) {
+            this.rotation.y += this.rotationDelta;
+        }
     }
 
     rotatePlayerRight() {
-        this.rotation.y -= this.rotationDelta;
+        if (this.canRotate(false)) {
+            this.rotation.y -= this.rotationDelta;
+        }
+    }
+
+    canRotate(isRotLeft = true) {
+        const worldDir = new Vector3(); 
+        this.getWorldDirection(worldDir);
+        const angle = Math.atan(worldDir.x / worldDir.z);
+
+        if (isRotLeft) {
+            return angle < Math.PI / 4; 
+        } else {
+            return angle > -Math.PI / 4; 
+        }
     }
 
     movePlayer(dx, dy, dz) {
