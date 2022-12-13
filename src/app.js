@@ -88,6 +88,7 @@ const loadPlayerMesh = () => {
                 animations.push(animation);
                 animation.play();
             });
+            animations[0].timeScale = 0.8;
             playerMesh.originalBoundingBox.setFromObject(object);
             const oldMin = playerMesh.originalBoundingBox.min;
             const oldMax = playerMesh.originalBoundingBox.max;
@@ -110,9 +111,11 @@ const loadPlayerMesh = () => {
 const renderer = new WebGLRenderer({
     antialias: true,
     powerPreference: 'high-performance',
+    logarithmicDepthBuffer: true,
 });
 
 const init = () => {
+    camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
     playerBody.position.set(0, 0, 0);
     playerMesh.position.set(0, 0, 0);
     playerMesh.visible = false;
@@ -127,13 +130,13 @@ const init = () => {
 const hud = new Hud(startGame, init);
 
 // Set up camera
-const FRONT_VIEW = new Vector3(0, 3, -2);
-const BACK_VIEW = new Vector3(0, 3, -10);
+const FRONT_VIEW = new Vector3(0, 1.4, 0.15);
+const BACK_VIEW = new Vector3(0, 3, -5);
 
 currCam.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
 currCam.lookAt(new Vector3(0, 0, 0));
 camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
-camera.lookAt(new Vector3(0, 0, 0));
+camera.lookAt(new Vector3(0, 2, 0));
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -191,7 +194,7 @@ const onAnimationFrameHandler = (timeStamp) => {
 
     if (mixer && !hud.isPaused) mixer.update(clock.getDelta());
     if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
-        scene.player.movePlayer(0, 0, 0.1);
+        scene.player.movePlayer(0, 0, 1);
 
         if (scene.player.position.x > 4) {
             playerBody.position.x = 4;
@@ -205,7 +208,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         scene.pebbleManager.handlePebbles(scene.player.position.z);
         handleFrustumCulling(scene, camera);
     } else if (!hud.gameStarted) {
-        startingCamera.position.z += 0.1;
+        startingCamera.position.z += 1;
     }
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
