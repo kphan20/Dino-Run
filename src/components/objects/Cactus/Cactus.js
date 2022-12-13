@@ -7,7 +7,7 @@ import CACTUS_TEXTURE from './cactus/normal.tga';
 
 // Basic structure and organization derived from starter code for Flower.js
 class Cactus extends Group {
-    constructor() {
+    constructor(rightBound = false, leftBound = false) {
         super();
         // Set object state
         this.state = {
@@ -21,6 +21,11 @@ class Cactus extends Group {
         this.boundingBox = this.originalBoundingBox.clone();
 
         this.visible = false;
+
+        this.minX = leftBound ? 4 : -4; // minimum bound for x coordinate
+        this.maxX = rightBound ? -4 : 4; // maximum bound for x coordinate
+        this.minY = 0; // minimum bound for y coordinate
+        this.maxY = 0; // maximum bound for y coordinate
     }
 
     garbageCollect() {
@@ -48,19 +53,24 @@ class Cactus extends Group {
 
     loadMesh() {
         return new Promise((resolve, reject) => {
+            resolve(true);
             const tgaLoader = new TGALoader();
             tgaLoader.resourcePath = './src/components/objects/Cactus/cactus/';
             tgaLoader.load(CACTUS_TEXTURE, (texture) => {
                 const material = new MeshPhongMaterial({
-                    color: 0x2b3a24,
+                    color: 0x2bd452,
                     map: texture,
                 });
+                material.flatShading = true;
                 const loader = new GLTFLoader();
                 loader.load(MODEL2, (gltf) => {
                     gltf.scene.scale.set(0.5, 0.5, 0.5);
                     this.add(gltf.scene);
                     gltf.scene.traverse((child) => {
-                        if (child.isMesh) child.material = material;
+                        if (child.isMesh) {
+                            child.material = material;
+                            child.geometry.computeVertexNormals();
+                        }
                     });
                     this.originalBoundingBox.setFromObject(gltf.scene);
                     gltf.scene.position.y =

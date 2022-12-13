@@ -128,7 +128,10 @@ const init = () => {
     camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
     playerBody.position.set(0, 0, 0);
     playerMesh.position.set(0, 0, 0);
+    playerMesh.rotation.y = 0;
     playerMesh.visible = false;
+    speed = 1;
+    frameCounter = 0;
     scene.obstacleManager.resetObstacles();
     currCam = startingCamera;
     animations[2].stop();
@@ -197,6 +200,8 @@ const animate = () => {
     window.requestAnimationFrame(animate);
 };
 
+let frameCounter = 0;
+let speed = 0.5;
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, currCam);
@@ -204,9 +209,11 @@ const onAnimationFrameHandler = (timeStamp) => {
 
     if (mixer && !hud.isPaused) mixer.update(clock.getDelta());
     if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
-        scene.player.movePlayer(0, 0, 1);
         if (!runningSound.isPlaying && scene.player.isOnGround())
             runningSound.play();
+        frameCounter++;
+        if (frameCounter % 300 === 0) speed += 0.5;
+        scene.player.movePlayer(0, 0, speed);
 
         if (scene.player.position.x > 4) {
             playerBody.position.x = 4;
@@ -221,6 +228,9 @@ const onAnimationFrameHandler = (timeStamp) => {
         handleFrustumCulling(scene, camera);
     } else if (!hud.gameStarted) {
         startingCamera.position.z += 1;
+        if (startingCamera.position.z > 500) {
+            startingCamera.position.z = 0;
+        }
     }
     window.requestAnimationFrame(onAnimationFrameHandler);
 };

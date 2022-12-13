@@ -14,7 +14,7 @@ class Player extends Mesh {
         this.boundingBox = this.originalBoundingBox.clone();
 
         // How much to rotate by for each key press
-        this.rotationDelta = Math.PI / 16;
+        this.rotationDelta = Math.PI / 32;
 
         // Save player body
         this.playerBody = playerBody;
