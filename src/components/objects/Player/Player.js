@@ -9,6 +9,7 @@ class Player extends Mesh {
 
         // Disable automatic frustum culling
         this.frustumCulled = false;
+        this.name = "player";
 
         this.originalBoundingBox = new Box3();
         this.boundingBox = this.originalBoundingBox.clone();

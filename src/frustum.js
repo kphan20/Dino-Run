@@ -11,7 +11,7 @@ const inFrustum = (obj, camera) => {
     const matrix = projectionMatrix;
     let boundingBox = null;
     if (obj === undefined) return true;
-    else if (obj.name === 'bird' || obj.name === 'cacti') {
+    else if (obj.name === 'bird' || obj.name === 'cacti' || obj.name === "player") {
         boundingBox = obj.originalBoundingBox;
     } else if (obj.geometry != undefined) {
         boundingBox = obj.geometry.boundingBox;
