@@ -3,6 +3,10 @@ import { Box3, Group } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { drawWireFrameBox } from '../../../helpers';
 import MODEL from './low_poly_bird/scene.gltf';
+require('./low_poly_bird/scene.bin');
+require('./low_poly_bird/textures/lambert2_baseColor.png');
+require('./low_poly_bird/textures/lambert2_metallicRoughness.png');
+require('./low_poly_bird/textures/lambert2_normal.png');
 
 // Basic structure and organization derived from starter code for Flower.js
 class Bird extends Group {
@@ -18,7 +22,7 @@ class Bird extends Group {
         };
 
         const loader = new GLTFLoader();
-        loader.setResourcePath('src/components/objects/Bird/low_poly_bird/');
+        loader.setResourcePath('assets/src/components/objects/Bird/low_poly_bird/');
         this.name = 'bird';
         this.originalBoundingBox = new Box3();
         this.boundingBox = this.originalBoundingBox.clone();
@@ -52,7 +56,7 @@ class Bird extends Group {
         return new Promise((resolve, reject) => {
             const loader = new GLTFLoader();
             loader.setResourcePath(
-                'src/components/objects/Bird/low_poly_bird/'
+                'assets/src/components/objects/Bird/low_poly_bird/'
             );
             loader.load(MODEL, (gltf) => {
                 gltf.scene.scale.setScalar(5);

@@ -49,7 +49,7 @@ class Cactus extends Group {
     loadMesh() {
         return new Promise((resolve, reject) => {
             const tgaLoader = new TGALoader();
-            tgaLoader.resourcePath = 'src/components/objects/Cactus/cactus/';
+            tgaLoader.resourcePath = './src/components/objects/Cactus/cactus/';
             tgaLoader.load(CACTUS_TEXTURE, (texture) => {
                 const material = new MeshPhongMaterial({
                     color: 0x2b3a24,

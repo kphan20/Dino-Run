@@ -6,6 +6,7 @@ import {
     OctahedronGeometry, 
     TextureLoader,
 } from 'three';
+require('./pebble_files1/textures/PolySphere_baseColor.png')
 
 class PebbleManager {
     constructor(numPebbles=10) {
@@ -15,7 +16,7 @@ class PebbleManager {
 
         // create shared texture
         const loader = new TextureLoader();
-        const texture = loader.load('src/components/objects/Pebble/pebble_files1/textures/PolySphere_baseColor.png');
+        const texture = loader.load('assets/src/components/managers/PebbleManager/pebble_files1/textures/PolySphere_baseColor.png');
         const pebbleMat = new MeshBasicMaterial({
             map: texture
         });   

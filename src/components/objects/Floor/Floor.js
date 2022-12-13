@@ -7,6 +7,7 @@ import {
     TextureLoader,
     MeshBasicMaterial,
   } from 'three';
+  require('./sand.jpeg');
   
   // Basic structure and organization derived from starter code for Flower.js
   class Floor extends Group {
@@ -77,7 +78,7 @@ import {
         }
     
         const loader = new TextureLoader();
-        const texture = loader.load('resources/sand.jpeg');
+        const texture = loader.load('assets/src/components/objects/Floor/sand.jpeg');
         texture.wrapS = MirroredRepeatWrapping; 
         texture.wrapT = MirroredRepeatWrapping;
         texture.rotation = MathUtils.degToRad(57);
