@@ -23,7 +23,7 @@ module.exports = {
                 exclude: path.resolve(__dirname, './node_modules/'),
             },
             {
-                test: /\.(jpe?g|png|gif|svg|tga|gltf|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|bin|ogg)$/i,
+                test: /\.(jpe?g|png|gif|svg|tga|gltf|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|bin|ogg|wav)$/i,
                 exclude: path.resolve(__dirname, './node_modules/'),
                 type: 'asset/resource',
                 generator: {
