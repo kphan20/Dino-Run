@@ -3,7 +3,7 @@ import { Vector3, Vector4 } from 'three';
 // Frustum culling
 export const handleFrustumCulling = (scene, camera) => {
     scene.traverse((obj) => {
-        obj.frustumCulled = inFrustum(obj, camera);
+        obj.visible = inFrustum(obj, camera);
     });
 };
 const inFrustum = (obj, camera) => {
@@ -12,8 +12,7 @@ const inFrustum = (obj, camera) => {
     let boundingBox = null;
     if (obj === undefined) return true;
     else if (obj.name === 'bird' || obj.name === 'cacti') {
-        obj.updateBoundingBox();
-        boundingBox = obj.boundingBox;
+        boundingBox = obj.originalBoundingBox;
     } else if (obj.geometry != undefined) {
         boundingBox = obj.geometry.boundingBox;
     }
