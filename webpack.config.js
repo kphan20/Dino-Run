@@ -23,9 +23,13 @@ module.exports = {
                 exclude: path.resolve(__dirname, './node_modules/'),
             },
             {
-                test: /\.(jpe?g|png|gif|svg|tga|gltf|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|ogg|wav)$/i,
+                test: /\.(jpe?g|png|gif|svg|tga|gltf|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|bin|ogg|wav)$/i,
                 use: 'file-loader',
                 exclude: path.resolve(__dirname, './node_modules/'),
+                type: 'asset/resource',
+                generator: {
+                    filename: 'assets/[path][name][ext][query]',
+                },
             },
             {
                 test: /\.(vert|frag|glsl|shader|txt)$/i,
@@ -58,7 +62,9 @@ module.exports = {
             resources$: path.resolve(__dirname, 'src/resources'),
             textures$: path.resolve(
                 __dirname,
-                'src/components/objects/Cactus/cactus_files/textures'
+                'src/components/objects/Cactus/cactus_files/textures',
+                'src/components/objects/Pebble/pebble_files1/textures',
+                'src/components/objects/Bird/low_poly_bird/textures'
             ),
         },
     },
