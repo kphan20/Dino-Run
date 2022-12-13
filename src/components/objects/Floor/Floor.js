@@ -77,7 +77,7 @@ import {
         }
     
         const loader = new TextureLoader();
-        const texture = loader.load('resources/sand.jpeg');
+        const texture = loader.load('./src/resources/sand.jpeg');
         texture.wrapS = MirroredRepeatWrapping; 
         texture.wrapT = MirroredRepeatWrapping;
         texture.rotation = MathUtils.degToRad(57);

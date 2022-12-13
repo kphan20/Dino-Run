@@ -18,7 +18,7 @@ class Bird extends Group {
         };
 
         const loader = new GLTFLoader();
-        loader.setResourcePath('src/components/objects/Bird/low_poly_bird/');
+        loader.setResourcePath('./src/components/objects/Bird/low_poly_bird/');
         this.name = 'bird';
         this.originalBoundingBox = new Box3();
         this.boundingBox = this.originalBoundingBox.clone();
@@ -52,7 +52,7 @@ class Bird extends Group {
         return new Promise((resolve, reject) => {
             const loader = new GLTFLoader();
             loader.setResourcePath(
-                'src/components/objects/Bird/low_poly_bird/'
+                './src/components/objects/Bird/low_poly_bird/'
             );
             loader.load(MODEL, (gltf) => {
                 gltf.scene.scale.setScalar(5);

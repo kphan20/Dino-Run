@@ -1,8 +1,8 @@
 {
-  "name": "lower-case-dashed-name-of-project",
+  "name": "dino-run",
   "repository": "Dino-Run",
   "version": "0.1.0",
-  "title": "3-Rex",
+  "title": "dino-run",
   "description": "3D version inspired by Google Chrome's dino run game for Princeton COS 426 (Computer Graphics) class.",
   "keywords": [
     "Princeton",

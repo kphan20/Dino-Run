@@ -15,7 +15,7 @@ class PebbleManager {
 
         // create shared texture
         const loader = new TextureLoader();
-        const texture = loader.load('src/components/objects/Pebble/pebble_files1/textures/PolySphere_baseColor.png');
+        const texture = loader.load('./src/components/objects/Pebble/pebble_files1/textures/PolySphere_baseColor.png');
         const pebbleMat = new MeshBasicMaterial({
             map: texture
         });   

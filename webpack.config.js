@@ -58,7 +58,9 @@ module.exports = {
             resources$: path.resolve(__dirname, 'src/resources'),
             textures$: path.resolve(
                 __dirname,
-                'src/components/objects/Cactus/cactus_files/textures'
+                'src/components/objects/Cactus/cactus_files/textures',
+                'src/components/objects/Pebble/pebble_files1/textures',
+                'src/components/objects/Bird/low_poly_bird/textures'
             ),
         },
     },
