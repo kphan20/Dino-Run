@@ -1,8 +1,9 @@
 class Hud {
-    constructor(startGame, restartGame) {
+    constructor(startGame, restartGame, runningSound) {
         this.gameStarted = false;
         this.isPaused = false;
         this.gameOver = false;
+        this.runningSound = runningSound;
 
         const fadeScreen = document.createElement('div');
         fadeScreen.style.cssText = `
@@ -36,6 +37,8 @@ class Hud {
         pauseButton.style.top = '20px';
         const pauseOnClick = () => {
             pausedText.style.visibility = this.isPaused ? 'hidden' : 'visible';
+            console.log(runningSound);
+            this.isPaused ? this.runningSound.play() : this.runningSound.stop();
             this.isPaused = !this.isPaused;
         };
         pauseOnClick.bind(this);
@@ -132,6 +135,7 @@ class Hud {
         this.gameOver = true;
         this.pauseButton.style.visibility = 'hidden';
         this.gameOverScreen.style.visibility = 'visible';
+        this.score.style.visibility = 'hidden';
         this.reportElement.innerHTML = `You managed to run ${this.score.innerHTML} meters!`;
     }
 }
