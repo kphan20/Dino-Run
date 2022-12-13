@@ -33,14 +33,14 @@ class Player extends Mesh {
     }
 
     canRotate(isRotLeft = true) {
-        const worldDir = new Vector3(); 
+        const worldDir = new Vector3();
         this.getWorldDirection(worldDir);
         const angle = Math.atan(worldDir.x / worldDir.z);
 
         if (isRotLeft) {
-            return angle < Math.PI / 4; 
+            return angle < Math.PI / 4;
         } else {
-            return angle > -Math.PI / 4; 
+            return angle > -Math.PI / 4;
         }
     }
 
@@ -57,17 +57,21 @@ class Player extends Mesh {
         );
     }
 
-    jumpPlayer() {
+    isOnGround() {
         const EPS = 0.01;
         const height = this.playerBody.shapes[0].height;
         const exp_floor = this.playerBody.position.y - height / 2;
-        const onGround = Math.abs(exp_floor) < EPS;
+        return Math.abs(exp_floor) < EPS;
+    }
+
+    jumpPlayer() {
+        const onGround = this.isOnGround();
         if (onGround) this.playerBody.velocity.set(0, 10, 0);
         this.position.copy(this.playerBody.position);
         return onGround;
     }
 
-    update(timeStamp) { }
+    update(timeStamp) {}
 }
 
 export default Player;

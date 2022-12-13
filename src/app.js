@@ -12,6 +12,7 @@ import {
     Vector3,
     Clock,
     AnimationMixer,
+    LoopOnce,
 } from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
@@ -27,6 +28,7 @@ import { Player } from './components/objects/Player';
 import deathSound from './resources/death.mp3';
 import jumpSound from './resources/boing.mp3';
 import runningModel from './components/objects/Player/running.fbx';
+import fallModel from './components/objects/Player/fall.fbx';
 
 // Handle Physics
 // Set up physics
@@ -73,8 +75,14 @@ const loadPlayerMesh = () => {
         fbxLoader.load(runningModel, (object) => {
             object.scale.set(0.01, 0.01, 0.01);
             playerMesh.add(object);
-            console.log(object);
             mixer = new AnimationMixer(object);
+            fbxLoader.load(fallModel, (fallObject) => {
+                const action = mixer.clipAction(fallObject.animations[0]);
+                action.setLoop(LoopOnce);
+                action.clampWhenFinished = true;
+                animations.push(action);
+            });
+
             object.animations.forEach((animation) => {
                 animation = mixer.clipAction(animation);
                 animations.push(animation);
@@ -110,6 +118,8 @@ const init = () => {
     playerMesh.visible = false;
     scene.obstacleManager.resetObstacles();
     currCam = startingCamera;
+    animations[2].stop();
+    animations[2].reset();
     animations[0].play();
     mixer.update(clock.getDelta());
 };
@@ -133,11 +143,14 @@ document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
+let dying = false;
 const handleGameOver = () => {
     hud.showGameOver();
     const audio = new Audio(deathSound);
     audio.play();
     animations[0].stop();
+    animations[2].play();
+    dying = true;
 };
 
 // current implementation uses bounding boxes to detect collisions
@@ -162,8 +175,11 @@ const handleCollisions = () => {
 const animate = () => {
     if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
         physicsWorld.fixedStep();
-        // cannonDebugger.update();
         scene.player.position.copy(playerBody.position);
+    } else if (dying) {
+        physicsWorld.fixedStep();
+        scene.player.position.copy(playerBody.position);
+        if (scene.player.isOnGround()) dying = false;
     }
     window.requestAnimationFrame(animate);
 };
@@ -173,10 +189,10 @@ const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, currCam);
     scene.update && scene.update(timeStamp);
 
+    if (mixer && !hud.isPaused) mixer.update(clock.getDelta());
     if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
         scene.player.movePlayer(0, 0, 0.1);
 
-        if (mixer) mixer.update(clock.getDelta());
         if (scene.player.position.x > 4) {
             playerBody.position.x = 4;
         }
