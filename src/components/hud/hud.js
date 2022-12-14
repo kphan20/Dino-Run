@@ -65,10 +65,12 @@ class Hud {
         pausedText.innerHTML = 'PAUSED';
         pausedText.style.cssText = `
             position: absolute;
-            right: 50%;
+            left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             visibility: hidden;
+            font-size: 20px;
+            font-weight: bold; 
         `;
 
         const startMenu = document.createElement('div');
@@ -180,6 +182,7 @@ class Hud {
             position: absolute;
             right: 50%;
             top: 10%;
+            font-weight: bold;
         `;
 
         this.showSpeedingMessage = () => {

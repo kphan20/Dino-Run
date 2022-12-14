@@ -1,7 +1,7 @@
 import { Box3, Group, MeshPhongMaterial } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
-import MODEL2 from './cactus.gltf';
+import MODEL2 from './cactus2.gltf';
 import { drawWireFrameBox } from '../../../helpers';
 import CACTUS_TEXTURE from './cactus/normal.tga';
 import { boxesIntersect } from '../../intersection.js';
