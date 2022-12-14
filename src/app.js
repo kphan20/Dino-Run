@@ -132,7 +132,7 @@ const init = () => {
     playerMesh.position.set(0, 0, 0);
     playerMesh.rotation.y = 0;
     playerMesh.visible = false;
-    speed = 1;
+    speed = 0.1;
     frameCounter = 0;
     scene.obstacleManager.resetObstacles();
     currCam = startingCamera;
@@ -212,7 +212,7 @@ const handleFloor = () => {
 }
 
 let frameCounter = 0;
-let speed = 0.5;
+let speed = 0.1;
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, currCam);
@@ -223,7 +223,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         if (!runningSound.isPlaying && scene.player.isOnGround())
             runningSound.play();
         frameCounter++;
-        if (frameCounter % 300 === 0) speed += 0.5;
+        if (frameCounter % 300 === 0) speed += 0.1;
         scene.player.movePlayer(0, 0, speed);
 
         if (scene.player.position.x > 4) {
