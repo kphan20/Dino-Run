@@ -3,6 +3,8 @@ import { Box3, Group } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { drawWireFrameBox } from '../../../helpers';
 import MODEL from './low_poly_bird/scene.gltf';
+import { boxesIntersect } from '../../intersection.js';
+
 require('./low_poly_bird/scene.bin');
 require('./low_poly_bird/textures/lambert2_baseColor.png');
 require('./low_poly_bird/textures/lambert2_metallicRoughness.png');
@@ -52,7 +54,8 @@ class Bird extends Group {
     checkCollision(playerBox) {
         if (!this.visible) return false;
         this.updateBoundingBox();
-        return playerBox.intersectsBox(this.boundingBox);
+        return boxesIntersect(playerBox, this.boundingBox);
+        // return playerBox.intersectsBox(this.boundingBox);
     }
 
     loadMesh() {
