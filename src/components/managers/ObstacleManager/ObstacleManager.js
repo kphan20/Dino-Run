@@ -95,6 +95,7 @@ class ObstacleManager {
     resetObstacles() {
         this.obstacles.forEach((obstacle) => {
             obstacle.garbageCollect();
+            obstacle.position.z = -10;
             this.inactiveObstacleSet.add(obstacle);
         });
     }
