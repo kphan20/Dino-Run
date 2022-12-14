@@ -28,7 +28,7 @@ import { drawWireFrameBox } from './helpers';
 import { handleFrustumCulling } from './frustum';
 import { Hud } from './components/hud';
 import { Player } from './components/objects/Player';
-import deathSoundFile from './resources/death.mp3';
+import deathSoundFile from './resources/thud.mp3';
 import jumpSoundFile from './resources/boing.mp3';
 import runningSoundFile from './resources/sand.wav';
 import runningModel from './components/objects/Player/running.fbx';
@@ -77,8 +77,8 @@ camera.add(listener);
 let mixer = null;
 let animations = [];
 const clock = new Clock();
-const floorWidth = 5000; 
-const floorHeight = 5000; 
+const floorWidth = 5000;
+const floorHeight = 5000;
 const scene = new SeedScene(floorWidth, floorHeight);
 const playerMesh = new Player(camera, playerBody);
 scene.player = playerMesh;
@@ -134,7 +134,7 @@ const init = () => {
     playerMesh.position.set(0, 0, 0);
     playerMesh.rotation.y = 0;
     playerMesh.visible = false;
-    speed = 0.1;
+    speed = 0.3;
     frameCounter = 0;
     scene.obstacleManager.resetObstacles();
     scene.floor.position.z = 0;
@@ -167,6 +167,7 @@ document.body.appendChild(canvas);
 let dying = false;
 const handleGameOver = () => {
     hud.showGameOver();
+    camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
     if (runningSound) runningSound.stop();
     if (deathSound) deathSound.play();
     animations[0].stop();
@@ -207,15 +208,16 @@ const animate = () => {
 
 // handle floor
 const handleFloor = () => {
-    const floorDepth = scene.floor.position.z; 
-    const frontierDepth = scene.player.position.z; 
-    const floorMinDepth = Math.floor(floorDepth - floorHeight / 2); 
-    const playerMinusFloorMinDepth = frontierDepth - floorMinDepth; 
-    if (playerMinusFloorMinDepth >= floorHeight / 2) scene.floor.translateFloor(); 
-}
+    const floorDepth = scene.floor.position.z;
+    const frontierDepth = scene.player.position.z;
+    const floorMinDepth = Math.floor(floorDepth - floorHeight / 2);
+    const playerMinusFloorMinDepth = frontierDepth - floorMinDepth;
+    if (playerMinusFloorMinDepth >= floorHeight / 2)
+        scene.floor.translateFloor();
+};
 
 let frameCounter = 0;
-let speed = 0.1;
+let speed = 0.3;
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, currCam);
@@ -226,8 +228,11 @@ const onAnimationFrameHandler = (timeStamp) => {
         if (!runningSound.isPlaying && scene.player.isOnGround())
             runningSound.play();
         frameCounter++;
-        if (frameCounter % 300 === 0) speed += 0.1;
-        scene.player.movePlayer(0, 0, 10);
+        if (frameCounter % 300 === 0) {
+            speed += 0.1;
+            hud.showSpeedingMessage();
+        }
+        scene.player.movePlayer(0, 0, speed);
 
         if (scene.player.position.x > 4) {
             playerBody.position.x = 4;
@@ -252,11 +257,14 @@ const onAnimationFrameHandler = (timeStamp) => {
 
 Promise.all([
     loadPlayerMesh(DEBUG_MODE),
-    ...scene.obstacleManager.obstacles.map((obstacle) => obstacle.loadMesh(DEBUG_MODE)),
+    ...scene.obstacleManager.obstacles.map((obstacle) =>
+        obstacle.loadMesh(DEBUG_MODE)
+    ),
     new Promise((resolve) => {
         audioLoader.load(deathSoundFile, (buffer) => {
             deathSound.setBuffer(buffer);
             deathSound.setLoop(false);
+            deathSound.setVolume(1.5);
             resolve(true);
         });
     }),
@@ -277,6 +285,7 @@ Promise.all([
     }),
 ]).then(() => {
     renderer.compile(scene, camera);
+    hud.renderingStarted();
     animate();
     window.requestAnimationFrame(onAnimationFrameHandler);
 });
@@ -295,7 +304,11 @@ window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
     const key = e.key;
-    if (hud.gameOver || hud.isPaused) return;
+    if (!hud.gameStarted || hud.gameOver) return;
+    if (hud.isPaused) {
+        if (e.code === 'Space') hud.pauseOnClick();
+        return;
+    }
 
     if (key === 'ArrowLeft') {
         scene.player.rotatePlayerLeft();
@@ -312,6 +325,8 @@ window.addEventListener('keydown', (e) => {
             camera.position.set(FRONT_VIEW.x, FRONT_VIEW.y, FRONT_VIEW.z);
         else camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
     } else if (key === 's') {
-        scene.floor.toggleFloor()
+        scene.floor.toggleFloor();
+    } else if (e.code === 'Space') {
+        hud.pauseOnClick();
     }
 });
