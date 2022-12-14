@@ -26,6 +26,8 @@ class Hud {
         score.style.left = '20px';
         score.style.top = '20px';
         score.style.visibility = 'hidden';
+        score.style['font-size'] = '20px';
+        score.style['font-weight'] = 'bold';
         this.score = score;
 
         const pauseButton = document.createElement('button');
@@ -126,9 +128,11 @@ class Hud {
             flex-direction: column;
             visibility: hidden;
             position: absolute;
-            right: 50%;
-            top: 50%;
             z-index: 6;
+            background-color: pink;
+            padding: 10px;
+            font-size: 25px;
+            font-weight: bold;
         `;
         this.gameOverScreen = gameOverScreen;
         this.reportElement = reportElement;
