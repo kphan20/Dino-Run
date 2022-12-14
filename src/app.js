@@ -168,8 +168,8 @@ let dying = false;
 const handleGameOver = () => {
     hud.showGameOver();
     camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
-    if (runningSound) runningSound.stop();
-    if (deathSound) deathSound.play();
+    if (runningSound && runningSound.source) runningSound.stop();
+    if (deathSound && deathSound.source) deathSound.play();
     animations[0].stop();
     animations[2].play();
     dying = true;
@@ -217,40 +217,45 @@ const handleFloor = () => {
 };
 
 let frameCounter = 0;
-let speed = 0.3;
+let speed = 1;
+const fps = 1000 / 30;
+let prevTimeStamp = 0;
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    renderer.render(scene, currCam);
-    scene.update && scene.update(timeStamp);
+    if (timeStamp - prevTimeStamp > fps) {
+        renderer.render(scene, currCam);
+        scene.update && scene.update(timeStamp);
 
-    if (mixer && !hud.isPaused) mixer.update(clock.getDelta());
-    if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
-        if (!runningSound.isPlaying && scene.player.isOnGround())
-            runningSound.play();
-        frameCounter++;
-        if (frameCounter % 300 === 0) {
-            speed += 0.1;
-            hud.showSpeedingMessage();
-        }
-        scene.player.movePlayer(0, 0, speed);
+        if (mixer && !hud.isPaused) mixer.update(clock.getDelta());
+        if (hud.gameStarted && !hud.gameOver && !hud.isPaused) {
+            if (!runningSound.isPlaying && scene.player.isOnGround())
+                runningSound.play();
+            frameCounter++;
+            if (frameCounter % 300 === 0) {
+                speed += 0.1;
+                hud.showSpeedingMessage();
+            }
+            scene.player.movePlayer(0, 0, speed);
 
-        if (scene.player.position.x > 4) {
-            playerBody.position.x = 4;
+            if (scene.player.position.x > 4) {
+                playerBody.position.x = 4;
+            }
+            if (scene.player.position.x < -4) {
+                playerBody.position.x = -4;
+            }
+            handleCollisions();
+            hud.updateScore(scene.player.position);
+            scene.obstacleManager.handleObstacles(scene.player.position.z);
+            scene.pebbleManager.handlePebbles(scene.player.position.z);
+            handleFrustumCulling(scene, camera);
+            handleFloor();
+        } else if (!hud.gameStarted) {
+            startingCamera.position.z += 1;
+            if (startingCamera.position.z > 500) {
+                startingCamera.position.z = 0;
+            }
         }
-        if (scene.player.position.x < -4) {
-            playerBody.position.x = -4;
-        }
-        handleCollisions();
-        hud.updateScore(scene.player.position);
-        scene.obstacleManager.handleObstacles(scene.player.position.z);
-        scene.pebbleManager.handlePebbles(scene.player.position.z);
-        handleFrustumCulling(scene, camera);
-        handleFloor();
-    } else if (!hud.gameStarted) {
-        startingCamera.position.z += 1;
-        if (startingCamera.position.z > 500) {
-            startingCamera.position.z = 0;
-        }
+        prevTimeStamp = timeStamp;
     }
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
