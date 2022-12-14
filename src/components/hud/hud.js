@@ -71,8 +71,8 @@ class Hud {
             display: flex;
             flex-direction: column;
             position: absolute;
-            right: 50%;
-            top: 50%;
+            left: 50%;
+            top: 30%;
             transform: translate(-50%, -50%);
             z-index: 6;
         `;
@@ -127,9 +127,27 @@ class Hud {
         this.gameOverScreen = gameOverScreen;
         this.reportElement = reportElement;
         this.returnButton = returnButton;
+
+        const speedingMessage = document.createElement('p');
+        document.body.appendChild(speedingMessage);
+        speedingMessage.innerHTML = 'Speeding Up!';
+        speedingMessage.style.visibility = 'hidden';
+        speedingMessage.style.cssText = `
+            visibility: hidden;
+            position: absolute;
+            right: 50%;
+            top: 10%;
+        `;
+
+        this.showSpeedingMessage = () => {
+            speedingMessage.style.visibility = 'visible';
+            setTimeout(() => {
+                speedingMessage.style.visibility = 'hidden';
+            }, 1500);
+        };
     }
     updateScore(position) {
-        this.score.innerHTML = `${position.z}`;
+        this.score.innerHTML = `${position.z.toFixed(1)}`;
     }
     showGameOver() {
         this.gameOver = true;

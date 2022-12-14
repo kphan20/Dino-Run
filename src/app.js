@@ -28,7 +28,7 @@ import { drawWireFrameBox } from './helpers';
 import { handleFrustumCulling } from './frustum';
 import { Hud } from './components/hud';
 import { Player } from './components/objects/Player';
-import deathSoundFile from './resources/death.mp3';
+import deathSoundFile from './resources/thud.mp3';
 import jumpSoundFile from './resources/boing.mp3';
 import runningSoundFile from './resources/sand.wav';
 import runningModel from './components/objects/Player/running.fbx';
@@ -162,6 +162,7 @@ document.body.appendChild(canvas);
 let dying = false;
 const handleGameOver = () => {
     hud.showGameOver();
+    camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
     runningSound.stop();
     deathSound.play();
     animations[0].stop();
@@ -212,7 +213,10 @@ const onAnimationFrameHandler = (timeStamp) => {
         if (!runningSound.isPlaying && scene.player.isOnGround())
             runningSound.play();
         frameCounter++;
-        if (frameCounter % 300 === 0) speed += 0.5;
+        if (frameCounter % 300 === 0) {
+            speed += 0.5;
+            hud.showSpeedingMessage();
+        }
         scene.player.movePlayer(0, 0, speed);
 
         if (scene.player.position.x > 4) {
@@ -242,6 +246,7 @@ Promise.all([
         audioLoader.load(deathSoundFile, (buffer) => {
             deathSound.setBuffer(buffer);
             deathSound.setLoop(false);
+            deathSound.setVolume(1.5);
             resolve(true);
         });
     }),
