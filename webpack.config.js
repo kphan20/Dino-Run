@@ -24,7 +24,6 @@ module.exports = {
             },
             {
                 test: /\.(jpe?g|png|gif|svg|tga|gltf|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|bin|ogg|wav)$/i,
-                use: 'file-loader',
                 exclude: path.resolve(__dirname, './node_modules/'),
                 type: 'asset/resource',
                 generator: {
