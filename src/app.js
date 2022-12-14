@@ -134,7 +134,7 @@ const init = () => {
     playerMesh.position.set(0, 0, 0);
     playerMesh.rotation.y = 0;
     playerMesh.visible = false;
-    speed = 0.1;
+    speed = 0.3;
     frameCounter = 0;
     scene.obstacleManager.resetObstacles();
     currCam = startingCamera;
@@ -216,7 +216,7 @@ const handleFloor = () => {
 };
 
 let frameCounter = 0;
-let speed = 0.1;
+let speed = 0.3;
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, currCam);
@@ -284,6 +284,7 @@ Promise.all([
     }),
 ]).then(() => {
     renderer.compile(scene, camera);
+    hud.renderingStarted();
     animate();
     window.requestAnimationFrame(onAnimationFrameHandler);
 });
@@ -302,7 +303,11 @@ window.addEventListener('resize', windowResizeHandler, false);
 
 window.addEventListener('keydown', (e) => {
     const key = e.key;
-    if (hud.gameOver || hud.isPaused) return;
+    if (!hud.gameStarted || hud.gameOver) return;
+    if (hud.isPaused) {
+        if (e.code === 'Space') hud.pauseOnClick();
+        return;
+    }
 
     if (key === 'ArrowLeft') {
         scene.player.rotatePlayerLeft();
@@ -320,5 +325,7 @@ window.addEventListener('keydown', (e) => {
         else camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
     } else if (key === 's') {
         scene.floor.toggleFloor();
+    } else if (e.code === 'Space') {
+        hud.pauseOnClick();
     }
 });

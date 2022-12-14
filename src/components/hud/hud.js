@@ -5,6 +5,15 @@ class Hud {
         this.gameOver = false;
         this.runningSound = runningSound;
 
+        const loadingMessage = document.createElement('p');
+        loadingMessage.innerHTML = 'Loading...';
+        document.body.appendChild(loadingMessage);
+        loadingMessage.style.cssText = `
+            position: absolute;
+            top: 50%;
+            right: 50%;
+        `;
+
         const fadeScreen = document.createElement('div');
         fadeScreen.style.cssText = `
             position: absolute;
@@ -37,14 +46,15 @@ class Hud {
         pauseButton.style.position = 'absolute';
         pauseButton.style.right = '20px';
         pauseButton.style.top = '20px';
-        const pauseOnClick = () => {
+        this.pauseOnClick = () => {
             pausedText.style.visibility = this.isPaused ? 'hidden' : 'visible';
-            console.log(runningSound);
-            this.isPaused ? this.runningSound.play() : this.runningSound.stop();
+            if (this.runningSound.source)
+                this.isPaused
+                    ? this.runningSound.play()
+                    : this.runningSound.stop();
             this.isPaused = !this.isPaused;
         };
-        pauseOnClick.bind(this);
-        pauseButton.onclick = pauseOnClick;
+        pauseButton.onclick = this.pauseOnClick;
         pauseButton.style.visibility = 'hidden';
         pauseButton.style.zIndex = '6';
         this.pauseButton = pauseButton;
@@ -72,8 +82,15 @@ class Hud {
         startMenu.appendChild(startText);
         const startButton = document.createElement('button');
         startButton.innerHTML = 'START';
+        startButton.style.cssText = `
+            border: none;
+            height: 50px;
+            width: 160px;
+            font-size: large;
+        `;
         startMenu.appendChild(startButton);
         startMenu.style.cssText = `
+            visibility: hidden;
             display: flex;
             flex-direction: column;
             position: absolute;
@@ -81,7 +98,13 @@ class Hud {
             top: 30%;
             transform: translate(-50%, -50%);
             z-index: 6;
+            align-items: center;
         `;
+        this.renderingStarted = () => {
+            loadingMessage.style.visibility = 'hidden';
+            startMenu.style.visibility = 'visible';
+        };
+
         const startOnClick = () => {
             startMenu.style.visibility = 'hidden';
             fadeScreen.style.opacity = '100';
@@ -117,6 +140,12 @@ class Hud {
         };
         returnFunc.bind(this);
         returnButton.onclick = returnFunc;
+        returnButton.style.cssText = `
+            border: none;
+            height: 50px;
+            width: 160px;
+            font-size: large;
+        `;
         gameOverScreen.appendChild(reportElement);
         // gameOverScreen.appendChild(restartButton);
         gameOverScreen.appendChild(returnButton);
@@ -136,6 +165,7 @@ class Hud {
             padding: 10px;
             font-size: 25px;
             font-weight: bold;
+            align-items: center;
         `;
         this.gameOverScreen = gameOverScreen;
         this.reportElement = reportElement;
