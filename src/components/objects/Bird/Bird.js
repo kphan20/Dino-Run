@@ -11,7 +11,7 @@ require('./low_poly_bird/textures/lambert2_normal.png');
 // Basic structure and organization derived from starter code for Flower.js
 class Bird extends Group {
     constructor() {
-        super(); 
+        super();
         this.frustumCulled = false;
 
         // Set object state
@@ -21,12 +21,15 @@ class Bird extends Group {
             depth: 5.0,
         };
 
-        const loader = new GLTFLoader();
-        loader.setResourcePath('assets/src/components/objects/Bird/low_poly_bird/');
         this.name = 'bird';
         this.originalBoundingBox = new Box3();
         this.boundingBox = this.originalBoundingBox.clone();
         this.visible = false;
+
+        this.minX = -4; // minimum bound for x coordinate
+        this.maxX = 4; // maximum bound for x coordinate
+        this.minY = -2; // minimum bound for y coordinate
+        this.maxY = 0; // maximum bound for y coordinate
     }
 
     garbageCollect() {

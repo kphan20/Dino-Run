@@ -8,6 +8,14 @@ class ObstacleManager {
 
         // generate 2 obstacles for now
         this.obstacles.push(new Cactus());
+        this.obstacles.push(new Cactus());
+        this.obstacles.push(new Cactus());
+        this.obstacles.push(new Cactus());
+        this.obstacles.push(new Cactus(true));
+        this.obstacles.push(new Cactus(false, true));
+        this.obstacles.push(new Bird());
+        this.obstacles.push(new Bird());
+        this.obstacles.push(new Bird());
         this.obstacles.push(new Bird());
 
         // add all obstacles initially to inactive obstacle set
@@ -16,15 +24,11 @@ class ObstacleManager {
         }
 
         // bounds used for obstacle generation
-        this.minX = -3; // minimum bound for x coordinate
-        this.maxX = 3; // maximum bound for x coordinate
-        this.minY = 0; // minimum bound for y coordinate
-        this.maxY = 0; // maximum bound for y coordinate
-        this.minZDist = 20; // minimum distance from inputted frontier depth
-        this.maxZDist = 30; // maximum distance from inputted frontier depth
+        this.minZDist = 30; // minimum distance from inputted frontier depth
+        this.maxZDist = 50; // maximum distance from inputted frontier depth
 
         // chance of obstacle being generated when available per render cycle
-        this.generationProbability = 0.01;
+        this.generationProbability = 0.2;
     }
 
     // render handler for obstacles
@@ -46,14 +50,20 @@ class ObstacleManager {
         }
 
         // generate random coordinates
-        const x = this.generateIntBetween(this.minX, this.maxX);
-        const y = this.generateIntBetween(this.minY, this.maxY);
+        const inactiveObstacle = [...this.inactiveObstacleSet.keys()][0];
+        const x = this.generateIntBetween(
+            inactiveObstacle.minX,
+            inactiveObstacle.maxX
+        );
+        const y = this.generateIntBetween(
+            inactiveObstacle.minY,
+            inactiveObstacle.maxY
+        );
         const z = this.generateIntBetween(
             frontierDepth + this.minZDist,
             frontierDepth + this.maxZDist
         );
         const pos = new Vector3(x, y, z);
-        const inactiveObstacle = [...this.inactiveObstacleSet.keys()][0];
         inactiveObstacle.placeBottomAt(pos);
         this.inactiveObstacleSet.delete(inactiveObstacle);
         inactiveObstacle.updateBoundingBox();

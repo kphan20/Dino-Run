@@ -13,7 +13,7 @@ module.exports = {
     target: 'web',
     devtool: 'source-map',
     stats: {
-        warnings: false
+        warnings: false,
     },
     module: {
         rules: [
@@ -23,12 +23,12 @@ module.exports = {
                 exclude: path.resolve(__dirname, './node_modules/'),
             },
             {
-                test: /\.(jpe?g|png|gif|svg|tga|gltf|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|bin|ogg)$/i,
+                test: /\.(jpe?g|png|gif|svg|tga|gltf|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|bin|ogg|wav)$/i,
                 exclude: path.resolve(__dirname, './node_modules/'),
                 type: 'asset/resource',
                 generator: {
-                  filename: 'assets/[path][name][ext][query]'
-                }
+                    filename: 'assets/[path][name][ext][query]',
+                },
             },
             {
                 test: /\.(vert|frag|glsl|shader|txt)$/i,
@@ -49,7 +49,7 @@ module.exports = {
                 test: /\.fbx/,
                 use: 'file-loader',
                 exclude: path.resolve(__dirname, './node_modules/'),
-            },            
+            },
         ],
     },
     resolve: {
@@ -64,7 +64,7 @@ module.exports = {
                 'src/components/objects/Cactus/cactus_files/textures',
                 'src/components/objects/Pebble/pebble_files1/textures',
                 'src/components/objects/Bird/low_poly_bird/textures'
-            ),            
+            ),
         },
     },
     plugins: [
