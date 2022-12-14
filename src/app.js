@@ -137,6 +137,7 @@ const init = () => {
     speed = 0.1;
     frameCounter = 0;
     scene.obstacleManager.resetObstacles();
+    scene.floor.position.z = 0;
     currCam = startingCamera;
     animations[2].stop();
     animations[2].reset();
@@ -226,7 +227,7 @@ const onAnimationFrameHandler = (timeStamp) => {
             runningSound.play();
         frameCounter++;
         if (frameCounter % 300 === 0) speed += 0.1;
-        scene.player.movePlayer(0, 0, speed);
+        scene.player.movePlayer(0, 0, 10);
 
         if (scene.player.position.x > 4) {
             playerBody.position.x = 4;
