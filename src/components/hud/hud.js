@@ -62,7 +62,11 @@ class Hud {
         const startMenu = document.createElement('div');
         document.body.appendChild(startMenu);
         const startText = document.createElement('p');
-        startText.innerHTML = 'GAME TITLE';
+        startText.innerHTML = '3-REX';
+        startText.style.cssText = `
+            font-size: 5em;
+            color: red;
+        `
         startMenu.appendChild(startText);
         const startButton = document.createElement('button');
         startButton.innerHTML = 'START';
@@ -71,9 +75,6 @@ class Hud {
             display: flex;
             flex-direction: column;
             position: absolute;
-            right: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
             z-index: 6;
         `;
         const startOnClick = () => {
@@ -115,6 +116,11 @@ class Hud {
         // gameOverScreen.appendChild(restartButton);
         gameOverScreen.appendChild(returnButton);
         document.body.appendChild(gameOverScreen);
+        document.body.style.cssText = `
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        `
         gameOverScreen.style.cssText = `
             display: flex;
             flex-direction: column;
