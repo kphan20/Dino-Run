@@ -137,6 +137,7 @@ const init = () => {
     speed = 0.3;
     frameCounter = 0;
     scene.obstacleManager.resetObstacles();
+    scene.floor.position.z = 0;
     currCam = startingCamera;
     animations[2].stop();
     animations[2].reset();
