@@ -34,6 +34,8 @@ import runningSoundFile from './resources/sand.wav';
 import runningModel from './components/objects/Player/running.fbx';
 import fallModel from './components/objects/Player/fall.fbx';
 
+const DEBUG_MODE = false;
+
 // Handle Physics
 // Set up physics
 const physicsWorld = new CANNON.World({
@@ -81,7 +83,7 @@ const scene = new SeedScene(floorWidth, floorHeight);
 const playerMesh = new Player(camera, playerBody);
 scene.player = playerMesh;
 scene.add(playerMesh);
-const loadPlayerMesh = () => {
+const loadPlayerMesh = (isDebugMode) => {
     return new Promise((resolve, reject) => {
         const fbxLoader = new FBXLoader();
         fbxLoader.load(runningModel, (object) => {
@@ -114,7 +116,7 @@ const loadPlayerMesh = () => {
                 oldMax.y,
                 oldMax.z
             );
-            drawWireFrameBox(playerMesh);
+            if (isDebugMode) drawWireFrameBox(playerMesh);
             mixer.update(clock.getDelta());
             resolve(true);
         });
@@ -248,8 +250,8 @@ const onAnimationFrameHandler = (timeStamp) => {
 };
 
 Promise.all([
-    loadPlayerMesh(),
-    ...scene.obstacleManager.obstacles.map((obstacle) => obstacle.loadMesh()),
+    loadPlayerMesh(DEBUG_MODE),
+    ...scene.obstacleManager.obstacles.map((obstacle) => obstacle.loadMesh(DEBUG_MODE)),
     new Promise((resolve) => {
         audioLoader.load(deathSoundFile, (buffer) => {
             deathSound.setBuffer(buffer);

@@ -52,7 +52,7 @@ class Cactus extends Group {
         return boxesIntersect(playerBox, this.boundingBox);
     }
 
-    loadMesh() {
+    loadMesh(isDebugMode) {
         return new Promise((resolve, reject) => {
             resolve(true);
             const tgaLoader = new TGALoader();
@@ -80,7 +80,7 @@ class Cactus extends Group {
                             this.originalBoundingBox.min.y
                         ) / 2;
                     this.originalBoundingBox.setFromObject(gltf.scene);
-                    drawWireFrameBox(this);
+                    if (isDebugMode) drawWireFrameBox(this);
                     resolve(true);
                 });
             });
