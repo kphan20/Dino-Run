@@ -131,8 +131,8 @@ class Floor extends Group {
         this.add(shaderMesh);
         this.textureMesh = textureMesh; 
         this.shaderMesh = shaderMesh; 
-        textureMesh.visible = false;
-        shaderMesh.visible = true;
+        textureMesh.visible = true;
+        shaderMesh.visible = false;
 
         // // add mesh
         // this.add(objMesh);
