@@ -3,7 +3,8 @@ import { Vector3, Vector4 } from 'three';
 // Frustum culling
 export const handleFrustumCulling = (scene, camera) => {
     scene.traverse((obj) => {
-        obj.visible = inFrustum(obj, camera);
+        // don't run frustum culling on floor and walls
+        if (!['floor', 'walls'].includes(obj.name)) obj.visible = inFrustum(obj, camera);
     });
 };
 const inFrustum = (obj, camera) => {

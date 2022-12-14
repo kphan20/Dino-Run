@@ -58,7 +58,7 @@ class Bird extends Group {
         // return playerBox.intersectsBox(this.boundingBox);
     }
 
-    loadMesh() {
+    loadMesh(isDebugMode) {
         return new Promise((resolve, reject) => {
             const loader = new GLTFLoader();
             loader.setResourcePath(
@@ -66,6 +66,7 @@ class Bird extends Group {
             );
             loader.load(MODEL, (gltf) => {
                 gltf.scene.scale.setScalar(5);
+                gltf.scene.rotateY(Math.PI);
 
                 this.add(gltf.scene);
                 this.originalBoundingBox.setFromObject(gltf.scene);
@@ -75,7 +76,7 @@ class Bird extends Group {
                         this.originalBoundingBox.min.y
                     ) / 2;
                 this.originalBoundingBox.setFromObject(gltf.scene);
-                drawWireFrameBox(this);
+                if (isDebugMode) drawWireFrameBox(this);
                 resolve(true);
             });
         });

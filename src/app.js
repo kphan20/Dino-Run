@@ -34,6 +34,8 @@ import runningSoundFile from './resources/sand.wav';
 import runningModel from './components/objects/Player/running.fbx';
 import fallModel from './components/objects/Player/fall.fbx';
 
+const DEBUG_MODE = false;
+
 // Handle Physics
 // Set up physics
 const physicsWorld = new CANNON.World({
@@ -75,11 +77,13 @@ camera.add(listener);
 let mixer = null;
 let animations = [];
 const clock = new Clock();
-const scene = new SeedScene();
+const floorWidth = 5000; 
+const floorHeight = 5000; 
+const scene = new SeedScene(floorWidth, floorHeight);
 const playerMesh = new Player(camera, playerBody);
 scene.player = playerMesh;
 scene.add(playerMesh);
-const loadPlayerMesh = () => {
+const loadPlayerMesh = (isDebugMode) => {
     return new Promise((resolve, reject) => {
         const fbxLoader = new FBXLoader();
         fbxLoader.load(runningModel, (object) => {
@@ -112,7 +116,7 @@ const loadPlayerMesh = () => {
                 oldMax.y,
                 oldMax.z
             );
-            drawWireFrameBox(playerMesh);
+            if (isDebugMode) drawWireFrameBox(playerMesh);
             mixer.update(clock.getDelta());
             resolve(true);
         });
@@ -130,7 +134,7 @@ const init = () => {
     playerMesh.position.set(0, 0, 0);
     playerMesh.rotation.y = 0;
     playerMesh.visible = false;
-    speed = 1;
+    speed = 0.1;
     frameCounter = 0;
     scene.obstacleManager.resetObstacles();
     currCam = startingCamera;
@@ -200,8 +204,17 @@ const animate = () => {
     window.requestAnimationFrame(animate);
 };
 
+// handle floor
+const handleFloor = () => {
+    const floorDepth = scene.floor.position.z; 
+    const frontierDepth = scene.player.position.z; 
+    const floorMinDepth = Math.floor(floorDepth - floorHeight / 2); 
+    const playerMinusFloorMinDepth = frontierDepth - floorMinDepth; 
+    if (playerMinusFloorMinDepth >= floorHeight / 2) scene.floor.translateFloor(); 
+}
+
 let frameCounter = 0;
-let speed = 0.5;
+let speed = 0.1;
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     renderer.render(scene, currCam);
@@ -212,7 +225,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         if (!runningSound.isPlaying && scene.player.isOnGround())
             runningSound.play();
         frameCounter++;
-        if (frameCounter % 300 === 0) speed += 0.5;
+        if (frameCounter % 300 === 0) speed += 0.1;
         scene.player.movePlayer(0, 0, speed);
 
         if (scene.player.position.x > 4) {
@@ -226,6 +239,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         scene.obstacleManager.handleObstacles(scene.player.position.z);
         scene.pebbleManager.handlePebbles(scene.player.position.z);
         handleFrustumCulling(scene, camera);
+        handleFloor();
     } else if (!hud.gameStarted) {
         startingCamera.position.z += 1;
         if (startingCamera.position.z > 500) {
@@ -236,8 +250,8 @@ const onAnimationFrameHandler = (timeStamp) => {
 };
 
 Promise.all([
-    loadPlayerMesh(),
-    ...scene.obstacleManager.obstacles.map((obstacle) => obstacle.loadMesh()),
+    loadPlayerMesh(DEBUG_MODE),
+    ...scene.obstacleManager.obstacles.map((obstacle) => obstacle.loadMesh(DEBUG_MODE)),
     new Promise((resolve) => {
         audioLoader.load(deathSoundFile, (buffer) => {
             deathSound.setBuffer(buffer);
@@ -296,5 +310,7 @@ window.addEventListener('keydown', (e) => {
         if (camera.position.z == BACK_VIEW.z)
             camera.position.set(FRONT_VIEW.x, FRONT_VIEW.y, FRONT_VIEW.z);
         else camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
+    } else if (key === 's') {
+        scene.floor.toggleFloor()
     }
 });
