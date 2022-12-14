@@ -169,7 +169,7 @@ const handleGameOver = () => {
     hud.showGameOver();
     camera.position.set(BACK_VIEW.x, BACK_VIEW.y, BACK_VIEW.z);
     if (runningSound && runningSound.source) runningSound.stop();
-    if (deathSound && deathSound.source) deathSound.play();
+    if (deathSound) deathSound.play();
     animations[0].stop();
     animations[2].play();
     dying = true;
