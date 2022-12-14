@@ -9,7 +9,7 @@ import {
     ShaderMaterial,
 } from 'three';
 import { Vector3 } from 'three/src/Three';
-require('./sand.jpeg');
+// require('./sand.jpeg');
 
 // Basic structure and organization derived from starter code for Flower.js
 class Floor extends Group {
