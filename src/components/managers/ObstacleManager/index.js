@@ -1,1 +1,0 @@
-export { default as ObstacleManager } from './ObstacleManager.js';
