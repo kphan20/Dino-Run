@@ -75,7 +75,9 @@ camera.add(listener);
 let mixer = null;
 let animations = [];
 const clock = new Clock();
-const scene = new SeedScene();
+const floorWidth = 5000; 
+const floorHeight = 5000; 
+const scene = new SeedScene(floorWidth, floorHeight);
 const playerMesh = new Player(camera, playerBody);
 scene.player = playerMesh;
 scene.add(playerMesh);
@@ -200,6 +202,15 @@ const animate = () => {
     window.requestAnimationFrame(animate);
 };
 
+// handle floor
+const handleFloor = () => {
+    const floorDepth = scene.floor.position.z; 
+    const frontierDepth = scene.player.position.z; 
+    const floorMinDepth = Math.floor(floorDepth - floorHeight / 2); 
+    const playerMinusFloorMinDepth = frontierDepth - floorMinDepth; 
+    if (playerMinusFloorMinDepth >= floorHeight / 2) scene.floor.translateFloor(); 
+}
+
 let frameCounter = 0;
 let speed = 0.5;
 // Render loop
@@ -213,7 +224,7 @@ const onAnimationFrameHandler = (timeStamp) => {
             runningSound.play();
         frameCounter++;
         if (frameCounter % 300 === 0) speed += 0.5;
-        scene.player.movePlayer(0, 0, 0.1);
+        scene.player.movePlayer(0, 0, speed);
 
         if (scene.player.position.x > 4) {
             playerBody.position.x = 4;
@@ -226,6 +237,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         scene.obstacleManager.handleObstacles(scene.player.position.z);
         scene.pebbleManager.handlePebbles(scene.player.position.z);
         handleFrustumCulling(scene, camera);
+        handleFloor();
     } else if (!hud.gameStarted) {
         startingCamera.position.z += 1;
         if (startingCamera.position.z > 500) {

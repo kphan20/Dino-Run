@@ -4,7 +4,7 @@ import { Floor, Left_Wall, Right_Wall } from 'objects';
 import { BasicLights } from 'lights';
 
 class SeedScene extends Scene {
-    constructor() {
+    constructor(floorWidth=5000, floorHeight=5000) {
         // Call parent Scene() constructor
         super();
 
@@ -24,7 +24,7 @@ class SeedScene extends Scene {
         this.add(...this.pebbleManager.pebbles);
 
         // Add floor and walls to scene
-        const floor = new Floor();
+        const floor = new Floor(floorWidth, floorHeight);
         const left_wall = new Left_Wall();
         const right_wall = new Right_Wall();
         this.floor = floor;

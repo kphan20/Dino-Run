@@ -13,7 +13,7 @@ require('./sand.jpeg');
 
 // Basic structure and organization derived from starter code for Flower.js
 class Floor extends Group {
-    constructor(parent) {
+    constructor(parent, width=5000, height=5000) {
         super();
 
         // Disable automatic frustum culling (to use manual implementation)
@@ -21,8 +21,8 @@ class Floor extends Group {
 
         // Set object state
         this.state = {
-            width: 5000,
-            height: 5000,
+            width: width,
+            height: height,
         };
 
         // create object mesh (Example followed https://threejs.org/docs/#api/en/geometries/PlaneGeometry)
@@ -165,6 +165,10 @@ class Floor extends Group {
   toggleFloor() {
     this.textureMesh.visible = !this.textureMesh.visible; 
     this.shaderMesh.visible = !this.shaderMesh.visible;
+  }
+
+  translateFloor() {
+    this.position.z += this.state.height / 2;
   }
 }
 
