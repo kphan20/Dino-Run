@@ -162,8 +162,8 @@ document.body.appendChild(canvas);
 let dying = false;
 const handleGameOver = () => {
     hud.showGameOver();
-    runningSound.stop();
-    deathSound.play();
+    if (runningSound) runningSound.stop();
+    if (deathSound) deathSound.play();
     animations[0].stop();
     animations[2].play();
     dying = true;

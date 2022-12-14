@@ -4,6 +4,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import MODEL2 from './cactus.gltf';
 import { drawWireFrameBox } from '../../../helpers';
 import CACTUS_TEXTURE from './cactus/normal.tga';
+import { boxesIntersect } from '../../intersection.js';
 
 // Basic structure and organization derived from starter code for Flower.js
 class Cactus extends Group {
@@ -48,7 +49,7 @@ class Cactus extends Group {
     checkCollision(playerBox) {
         if (!this.visible) return false;
         this.updateBoundingBox();
-        return playerBox.intersectsBox(this.boundingBox);
+        return boxesIntersect(playerBox, this.boundingBox);
     }
 
     loadMesh() {
