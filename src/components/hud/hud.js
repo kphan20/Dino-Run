@@ -135,7 +135,8 @@ class Hud {
         this.returnButton = returnButton;
     }
     updateScore(position) {
-        this.score.innerHTML = `${position.z}`;
+        const roundedScore = Math.floor(position.z * 10) / 10; 
+        this.score.innerHTML = `${roundedScore}`;
     }
     showGameOver() {
         this.gameOver = true;
