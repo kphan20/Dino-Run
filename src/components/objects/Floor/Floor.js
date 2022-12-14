@@ -6,13 +6,14 @@ import {
     MirroredRepeatWrapping,
     TextureLoader,
     MeshBasicMaterial,
+    ShaderMaterial
 } from 'three';
 import { Vector3 } from 'three/src/Three';
 require('./sand.jpeg');
 
 // Basic structure and organization derived from starter code for Flower.js
 class Floor extends Group {
-    constructor(parent) {
+    constructor(parent, width=5000, height=5000) {
         super();
 
         // Disable automatic frustum culling (to use manual implementation)
@@ -20,8 +21,8 @@ class Floor extends Group {
 
         // Set object state
         this.state = {
-            width: 5000,
-            height: 5000,
+            width: width,
+            height: height,
         };
 
         // create object mesh (Example followed https://threejs.org/docs/#api/en/geometries/PlaneGeometry)
@@ -96,27 +97,42 @@ class Floor extends Group {
         texture.wrapS = MirroredRepeatWrapping;
         texture.wrapT = MirroredRepeatWrapping;
         texture.rotation = MathUtils.degToRad(57);
-        texture.repeat.set(100, 100);
-        const objMat = new MeshBasicMaterial({
+        const textureObjMat = new MeshBasicMaterial({
             color: 0xffffdf,
             // wireframe: true,
             // map: texture,
             // precision: 'lowp',
         });
+        texture.repeat.set(500, 500);
+        this.texture = texture; 
+        const textureMesh = new Mesh(objGeo, textureObjMat);
+        textureMesh.rotateX(Math.PI / -2);
 
-        const objMesh = new Mesh(objGeo, objMat);
-
-        // rotate mesh to align horizontally
-        objMesh.rotateX(Math.PI / -2);
+        // create grid shader mesh
+        const gridObjMesh = new ShaderMaterial({
+            vertexShader: vertexShader(), 
+            fragmentShader: fragmentShader(),
+        })
+        const shaderMesh = new Mesh(objGeo, gridObjMesh);
+        shaderMesh.rotateX(Math.PI / -2);
+        shaderMesh.name = 'floor';
+        textureMesh.name = 'floor';
+        this.name = 'floor';
 
         // set object position
         //this.position.y = -2;
 
         // Disable auto frustum culling
-        objMesh.frustumCulled = false;
+        textureMesh.frustumCulled = false; 
+        shaderMesh.frustumCulled = false; 
 
         // add mesh
-        this.add(objMesh);
+        this.add(textureMesh);
+        this.add(shaderMesh);
+        this.textureMesh = textureMesh; 
+        this.shaderMesh = shaderMesh; 
+        textureMesh.visible = true;
+        shaderMesh.visible = false;
 
         // // add mesh
         // this.add(objMesh);
@@ -144,7 +160,16 @@ class Floor extends Group {
         //   const objMesh = new Mesh(objGeo, objMat);
         //   objMesh.frustumCulled = false;
         // }
-    }
+  }
+
+  toggleFloor() {
+    this.textureMesh.visible = !this.textureMesh.visible; 
+    this.shaderMesh.visible = !this.shaderMesh.visible;
+  }
+
+  translateFloor() {
+    this.position.z += this.state.height / 2;
+  }
 }
 
 export default Floor;

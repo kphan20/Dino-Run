@@ -26,6 +26,8 @@ class Hud {
         score.style.left = '20px';
         score.style.top = '20px';
         score.style.visibility = 'hidden';
+        score.style['font-size'] = '20px';
+        score.style['font-weight'] = 'bold';
         this.score = score;
 
         const pauseButton = document.createElement('button');
@@ -62,7 +64,11 @@ class Hud {
         const startMenu = document.createElement('div');
         document.body.appendChild(startMenu);
         const startText = document.createElement('p');
-        startText.innerHTML = 'GAME TITLE';
+        startText.innerHTML = '3-REX';
+        startText.style.cssText = `
+            font-size: 5em;
+            color: red;
+        `;
         startMenu.appendChild(startText);
         const startButton = document.createElement('button');
         startButton.innerHTML = 'START';
@@ -115,14 +121,21 @@ class Hud {
         // gameOverScreen.appendChild(restartButton);
         gameOverScreen.appendChild(returnButton);
         document.body.appendChild(gameOverScreen);
+        document.body.style.cssText = `
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        `;
         gameOverScreen.style.cssText = `
             display: flex;
             flex-direction: column;
             visibility: hidden;
             position: absolute;
-            right: 50%;
-            top: 50%;
             z-index: 6;
+            background-color: pink;
+            padding: 10px;
+            font-size: 25px;
+            font-weight: bold;
         `;
         this.gameOverScreen = gameOverScreen;
         this.reportElement = reportElement;
@@ -147,7 +160,8 @@ class Hud {
         };
     }
     updateScore(position) {
-        this.score.innerHTML = `${position.z.toFixed(1)}`;
+        const roundedScore = Math.floor(position.z * 10) / 10;
+        this.score.innerHTML = `${roundedScore}`;
     }
     showGameOver() {
         this.gameOver = true;
