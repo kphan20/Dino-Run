@@ -90,21 +90,21 @@ class Floor extends Group {
         `;
         }
 
-        const loader = new TextureLoader();
-        const texture = loader.load(
-            'assets/src/components/objects/Floor/sand.jpeg'
-        );
-        texture.wrapS = MirroredRepeatWrapping;
-        texture.wrapT = MirroredRepeatWrapping;
-        texture.rotation = MathUtils.degToRad(57);
+        // const loader = new TextureLoader();
+        // const texture = loader.load(
+        //     'assets/src/components/objects/Floor/sand.jpeg'
+        // );
+        // texture.wrapS = MirroredRepeatWrapping;
+        // texture.wrapT = MirroredRepeatWrapping;
+        // texture.rotation = MathUtils.degToRad(57);
         const textureObjMat = new MeshBasicMaterial({
             color: 0xffffdf, //0xad6e5e
             // wireframe: true,
             // map: texture,
             // precision: 'lowp',
         });
-        texture.repeat.set(500, 500);
-        this.texture = texture;
+        // texture.repeat.set(500, 500);
+        // this.texture = texture;
         const textureMesh = new Mesh(objGeo, textureObjMat);
         textureMesh.rotateX(Math.PI / -2);
 
