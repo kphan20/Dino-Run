@@ -217,8 +217,8 @@ const handleFloor = () => {
 };
 
 let frameCounter = 0;
-let speed = 1;
-const fps = 1000 / 30;
+let speed = 0.3;
+const fps = 1000 / 60;
 let prevTimeStamp = 0;
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
